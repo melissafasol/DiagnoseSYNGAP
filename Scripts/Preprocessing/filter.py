@@ -6,12 +6,14 @@ from scipy import signal
 
 class NoiseFilter():
     
-    def __init__(self, unfiltered_data, number_of_epochs, noise_limit):
+    def __init__(self, unfiltered_data, number_of_epochs, noise_limit, brain_state_file):
         '''input unfiltered data and the number of epochs data needs to be split into
-        - this should be equivalent to the length of a brainstate file'''
+        - this should be equivalent to the length of a brainstate file. Class will output new brainstate file
+        with identified noisy epochs'''
         self.unfiltered_data = unfiltered_data
         self.number_of_epochs = number_of_epochs
         self.noise_limit = noise_limit
+        self.brain_state_file = brain_state_file
         
     def find_packetloss_indices(self):
         def packet_loss(epoch):
@@ -22,16 +24,19 @@ class NoiseFilter():
             packet_loss_score = []
             for epoch in data:
                 packet_loss_score.append(0) if packet_loss(epoch) == True else packet_loss_score.append(6)
-                return packet_loss_score
+            return packet_loss_score
     
-        split_epochs = np.split(self.unfiltered_data, self.number_of_epochs, axis = 1)  #split raw data into epochs 
+        split_epochs = np.split(self.unfiltered_data, self.number_of_epochs, axis = 1)  #split raw data into epochs
         packet_loss_score = get_dataset(split_epochs) #find indices where value in epoch exceeds 3000mV
         noise_indices = []
         for idx, i in enumerate(packet_loss_score):
             if i == 6:
                 noise_indices.append(idx)
                 
-        return noise_indices
+        #change identified noisy indices in brain state file 
+        self.brain_state_file.loc[noise_indices, 'brainstate'] = 6
+                
+        return self.brain_state_file
         
 
 class BandPassFilter:
