@@ -1,6 +1,7 @@
 import os 
 import numpy as np 
 import pandas as pd 
+from scipy import signal 
 
 
 class NoiseFilter():
@@ -12,14 +13,14 @@ class NoiseFilter():
         self.number_of_epochs = number_of_epochs
         self.noise_limit = noise_limit
         
-    def find_packetloss_indices(self, reshaped_data):
+    def find_packetloss_indices(self):
         def packet_loss(epoch):
             mask = epoch.max() < self.noise_limit
             return mask 
         
-        def get_dataset(reshaped_data):
+        def get_dataset(data):
             packet_loss_score = []
-            for epoch in reshaped_data:
+            for epoch in data:
                 packet_loss_score.append(0) if packet_loss(epoch) == True else packet_loss_score.append(6)
                 return packet_loss_score
     
@@ -32,4 +33,32 @@ class NoiseFilter():
                 
         return noise_indices
         
+
+class BandPassFilter:
+
+    order = 3
+    sampling_rate = 250.4 
+    nyquist = 125.2
+    low = 0.2/nyquist
+    high = 100/nyquist
+    
+    def __init__(self, unfiltered_data, order, sampling_rate, lower_bound, upper_bound):
+        '''order = 3
+        sampling_rate = 250.4 
+        nyquist = 125.2
+        low = 0.2/nyquist
+        high = 100/nyquist'''
         
+        self.unfiltered_data = unfiltered_data
+        self.order = order
+        self.sampling_rate = sampling_rate
+        self.nyquist = sampling_rate/2
+        self.low = lower_bound/self.nyquist
+        self.high = upper_bound/self.nyquist
+        
+
+    def butter_bandpass(self):
+        #stripped filter function to apply bandpass filter to entire recording before time and frequency domain calculations
+        butter_b, butter_a = signal.butter(self.order, [self.low, self.high], btype = 'band', analog = False)
+        filtered_data = signal.filtfilt(butter_b, butter_a, self.unfiltered_data)
+        return filtered_data
