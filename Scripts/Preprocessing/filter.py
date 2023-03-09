@@ -4,7 +4,14 @@ import pandas as pd
 from scipy import signal 
 
 
-class NoiseFilter():
+
+class NoiseFilter:
+    
+    order = 3
+    sampling_rate = 250.4 
+    nyquist = sampling_rate/2
+    low = 0.2/nyquist
+    high = 100/nyquist
     
     def __init__(self, unfiltered_data, number_of_epochs, noise_limit, brain_state_file):
         '''input unfiltered data and the number of epochs data needs to be split into
@@ -25,6 +32,13 @@ class NoiseFilter():
             for epoch in data:
                 packet_loss_score.append(0) if packet_loss(epoch) == True else packet_loss_score.append(6)
             return packet_loss_score
+        
+        def butter_bandpass(self):
+        #stripped filter function to apply bandpass filter to entire recording before time and frequency domain calculations
+        butter_b, butter_a = signal.butter(self.order, [self.low, self.high], btype = 'band', analog = False)
+        filtered_data = signal.filtfilt(butter_b, butter_a, self.unfiltered_data)
+
+        return filtered_data
     
         split_epochs = np.split(self.unfiltered_data, self.number_of_epochs, axis = 1)  #split raw data into epochs
         packet_loss_score = get_dataset(split_epochs) #find indices where value in epoch exceeds 3000mV
@@ -47,7 +61,7 @@ class BandPassFilter:
     low = 0.2/nyquist
     high = 100/nyquist
     
-    def __init__(self, unfiltered_data, order, sampling_rate, lower_bound, upper_bound):
+    def __init__(self, unfiltered_data, order, sampling_rate, lower_bound, upper_bound, number_of_epochs):
         '''order = 3
         sampling_rate = 250.4 
         nyquist = 125.2
@@ -60,10 +74,19 @@ class BandPassFilter:
         self.nyquist = sampling_rate/2
         self.low = lower_bound/self.nyquist
         self.high = upper_bound/self.nyquist
+        self.number_of_epochs = number_of_epochs
         
 
     def butter_bandpass(self):
         #stripped filter function to apply bandpass filter to entire recording before time and frequency domain calculations
         butter_b, butter_a = signal.butter(self.order, [self.low, self.high], btype = 'band', analog = False)
         filtered_data = signal.filtfilt(butter_b, butter_a, self.unfiltered_data)
+
         return filtered_data
+
+        
+    def lin_reg_preprocessing(self, filtered_data):
+        
+        split_epochs = np.split(filtered_data, self.number_of_epochs, axis = 1)  #split raw data into epochs
+        
+        
