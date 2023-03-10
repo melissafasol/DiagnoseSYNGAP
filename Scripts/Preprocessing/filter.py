@@ -1,6 +1,7 @@
 import os 
 import numpy as np 
 import pandas as pd 
+import scipy
 from scipy import signal 
 
 from parameters import channel_variables
@@ -82,10 +83,48 @@ class NoiseFilter:
         
         #bandpass filter data       
         bandpass_filtered_data = butter_bandpass(data = selected_channels)
-        
-                
+                        
         return self.brain_state_file, bandpass_filtered_data
+    
+    def power_calc_noise(self, bandpass_filtered_data):
+
+        def lin_reg_calc(epoch):
+            noise_array = []
+            power_array = []
+            freq, power = scipy.signal.welch(epoch, window = 'hann', fs = 250.4, nperseg = 1252)
+            slope, intercept = np.polyfit(freq, power, 1)
+            power_array.append(power)
+            if intercept > 500 or slope < -5:
+                noise_array.append(5)
+            else:
+                noise_array.append(0)
+            
+            return noise_array, power_array     
         
+        
+        def apply_lin_reg(bandpass_filtered_data):
+            '''function applies lin_reg_calc function to entire time series and returns two arrays
+            one with labels for '''
+            split_epochs = np.split(bandpass_filtered_data, self.number_of_epochs, axis = 1)
+            noise_per_epoch = []
+            power_calc = []
+            for idx, epoch in enumerate(split_epochs):
+                channel_arrays = []
+                for chan in epoch:
+                    power= lin_reg_calc(chan)
+                    channel_arrays.append(power)
+                one_epoch_arrays = np.dstack(channel_arrays)
+                one_epoch_power = np.vstack(one_epoch_arrays[1][0])
+                power_calc.append(one_epoch_power)
+                noise_per_epoch.append(one_epoch_arrays[0][0].T)
+            
+            noise_per_epoch_labels = np.dstack(noise_per_epoch)
+            power_calc_full_rec = np.dstack(power_calc)
+            return power_calc_full_rec, noise_per_epoch_labels
+        
+        power_calc_full_rec, noise_per_epoch_labels = apply_lin_reg(bandpass_filtered_data)
+        return power_calc_full_rec, noise_per_epoch_labels
+            
 
 
 
