@@ -118,12 +118,12 @@ class NoiseFilter:
                 power_calc.append(one_epoch_power)
                 noise_per_epoch.append(one_epoch_arrays[0][0].T)
             
-            noise_per_epoch_labels = np.dstack(noise_per_epoch)
-            power_calc_full_rec = np.dstack(power_calc)
-            return power_calc_full_rec, noise_per_epoch_labels
+            power_array = np.array(power_calc)
+            label_array = np.array(noise_per_epoch)
+            return power_array, label_array
         
-        power_calc_full_rec, noise_per_epoch_labels = apply_lin_reg(bandpass_filtered_data)
-        return power_calc_full_rec, noise_per_epoch_labels
+        power_array, label_array = apply_lin_reg(bandpass_filtered_data)
+        return power_array, label_array
             
 
 
