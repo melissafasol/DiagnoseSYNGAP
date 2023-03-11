@@ -74,8 +74,8 @@ class NoiseFilter:
             return noise_array, power_array    
         
         def apply_lin_reg(bandpass_filtered_data):
-            '''function applies lin_reg_calc function to entire time series and returns two arrays
-            one with labels for '''
+            '''function applies lin_reg_calc function to entire time series and returns two arrays,
+            one with noise labels and one with power calculation results'''
             split_epochs = np.split(bandpass_filtered_data, self.number_of_epochs, axis = 1)
             noise_per_epoch = []
             power_calc = []
