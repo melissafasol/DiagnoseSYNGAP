@@ -28,17 +28,18 @@ class NoiseFilter:
         self.channel_numbers = channelvariables['channel_numbers']
         self.ch_type = ch_type                                          #specify channel type to perform calculations on
         
-        
+   
+    def filter_data_type(self):
+         
         def butter_bandpass(data):
             butter_b, butter_a = signal.butter(self.order, [self.low, self.high], btype = 'band', analog = False)
             filtered_data = signal.filtfilt(butter_b, butter_a, data)
             return filtered_data
-
-        def filter_data_type():
-            indices = []
-            if self.ch_type == 'eeg':
-                for idx, ch in enumerate(self.channel_types):
-                    if ch == 'eeg':
+        
+        indices = []
+        if self.ch_type == 'eeg':
+            for idx, ch in enumerate(self.channel_types):
+                if ch == 'eeg':
                         indices.append(idx)
             if self.ch_type == 'emg':
                 for idx, ch in enumerate(self.channel_types):
@@ -46,17 +47,15 @@ class NoiseFilter:
                         indices.append(idx)
             if self.ch_type == 'all':
                 indices = self.channel_numbers
-            return indices
         
-        #Select all, emg, or eeg channel indices to apply bandpass filter 
-        indices = filter_data_type()                                    
+        #Select all, emg, or eeg channel indices to apply bandpass filter                                    
         selected_channels = self.unfiltered_data[indices, :]     
         bandpass_filtered_data=butter_bandpass(data=selected_channels) 
                         
         return bandpass_filtered_data
 
     
-    def power_calc_noise(self, bandpass_filtered_data, slope_thresh, int_thresh):
+    def power_calc_noise(self, bandpass_filtered_data, slope_thresh, int_thresh, clean_br, br_number):
         
         def lin_reg_calc(epoch):
             noise_array = []
@@ -72,31 +71,35 @@ class NoiseFilter:
             
             return noise_array, power_array    
         
-        def apply_lin_reg(bandpass_filtered_data, clean_br, br_number):
+        
+        def apply_lin_reg(bandpass_filtered_data, clean_br, br_number ): #, raw):
             '''function applies lin_reg_calc function to entire time series and returns two arrays,
             one with noise labels and one with power calculation results'''
-            split_epochs = np.split(bandpass_filtered_data, self.number_of_epochs, axis = 1)
-            noise_per_epoch = []
+            split_epochs = np.split(bandpass_filtered_data, self.num_epochs, axis = 1)
+            noisy_indices = []
             power_calc = []
             packet_loss = (clean_br.query('brainstate == 6')).index.tolist()
-            br_calc = (clean_br.query('brainstate == str(br_number)'))
+            br_calc = clean_br[clean_br['brainstate'] == br_number].index.tolist()
             for idx, epoch in enumerate(split_epochs):
                 if idx in packet_loss:
                     pass
-                else:
+                elif idx in br_calc:
                     channel_arrays = []
                     for chan in epoch:
-                        power= lin_reg_calc(chan)
-                        channel_arrays.append(power)
-                        one_epoch_arrays = np.dstack(channel_arrays)
+                            power= lin_reg_calc(chan)
+                            channel_arrays.append(power)
+                    one_epoch_arrays = np.dstack(channel_arrays)
+                    if one_epoch_arrays[0][0][0] == 5:
+                        noisy_indices.append(idx)
+                    else:
                         one_epoch_power = np.vstack(one_epoch_arrays[1][0])
                         power_calc.append(one_epoch_power)
-                        noise_per_epoch.append(one_epoch_arrays[0][0].T)
+                else:
+                    pass
             
             power_array = np.array(power_calc)
-            label_array = np.array(noise_per_epoch)
-            return power_array, label_array
+            noise_array = np.array(noisy_indices)
+            return power_array, noise_array
         
-        power_array, label_array = apply_lin_reg(bandpass_filtered_data)
+        power_array, label_array = apply_lin_reg(bandpass_filtered_data, clean_br, br_number)
         return power_array, label_array
-            
