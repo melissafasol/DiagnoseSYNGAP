@@ -4,7 +4,7 @@ import pandas as pd
 import scipy
 from scipy import signal 
 
-from parameters import channelvariables
+#from parameters import channelvariables
 
 
 class NoiseFilter:
@@ -19,10 +19,9 @@ class NoiseFilter:
     high = 100/nyquist
 
     
-    def __init__(self, unfiltered_data, number_of_epochs, brain_state_file, channelvariables,
-                 ch_type):
+    def __init__(self, unfiltered_data, num_epochs, brain_state_file, channelvariables,ch_type):
         self.unfiltered_data = unfiltered_data 
-        self.number_of_epochs = number_of_epochs                        #number of epochs to split raw data into 
+        self.num_epochs = num_epochs                        #number of epochs to split raw data into 
         self.brain_state_file = brain_state_file                        #dataframe with brainstates  
         self.channel_variables = channelvariables                      #dictionary with channel types and channel variables 
         self.channel_types= channelvariables['channel_types']
@@ -35,7 +34,7 @@ class NoiseFilter:
             filtered_data = signal.filtfilt(butter_b, butter_a, data)
             return filtered_data
 
-        def filter_data_type(self, ):
+        def filter_data_type():
             indices = []
             if self.ch_type == 'eeg':
                 for idx, ch in enumerate(self.channel_types):
@@ -73,21 +72,26 @@ class NoiseFilter:
             
             return noise_array, power_array    
         
-        def apply_lin_reg(bandpass_filtered_data):
+        def apply_lin_reg(bandpass_filtered_data, clean_br, br_number):
             '''function applies lin_reg_calc function to entire time series and returns two arrays,
             one with noise labels and one with power calculation results'''
             split_epochs = np.split(bandpass_filtered_data, self.number_of_epochs, axis = 1)
             noise_per_epoch = []
             power_calc = []
+            packet_loss = (clean_br.query('brainstate == 6')).index.tolist()
+            br_calc = (clean_br.query('brainstate == str(br_number)'))
             for idx, epoch in enumerate(split_epochs):
-                channel_arrays = []
-                for chan in epoch:
-                    power= lin_reg_calc(chan)
-                    channel_arrays.append(power)
-                one_epoch_arrays = np.dstack(channel_arrays)
-                one_epoch_power = np.vstack(one_epoch_arrays[1][0])
-                power_calc.append(one_epoch_power)
-                noise_per_epoch.append(one_epoch_arrays[0][0].T)
+                if idx in packet_loss:
+                    pass
+                else:
+                    channel_arrays = []
+                    for chan in epoch:
+                        power= lin_reg_calc(chan)
+                        channel_arrays.append(power)
+                        one_epoch_arrays = np.dstack(channel_arrays)
+                        one_epoch_power = np.vstack(one_epoch_arrays[1][0])
+                        power_calc.append(one_epoch_power)
+                        noise_per_epoch.append(one_epoch_arrays[0][0].T)
             
             power_array = np.array(power_calc)
             label_array = np.array(noise_per_epoch)

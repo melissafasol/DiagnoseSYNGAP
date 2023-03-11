@@ -14,13 +14,17 @@ class FindNoiseThreshold:
     These variables will be used to determine the threshold for noise in the Filter class.
     """
     
-    def __init__(self, noise_idx, data, num_epochs, noise_limit):
-        self.noise_idx=noise_idx
+    def __init__(self, data, num_epochs, brain_state_file, noise_limit, channelvariables):
         self.data=data 
         self.num_epochs=num_epochs
-        self.noise_limit # threshold (mV) beyond which data is labelled as noise
+        self.brain_state_file = brain_state_file
+        self.noise_limit = noise_limit          #threshold (mV) beyond which data is labelled as noise
+        self.ch_variables = channelvariables        #dictionary with channel types and channel variables 
+        self.channel_types= channelvariables['channel_types']
+        self.channel_numbers = channelvariables['channel_numbers']
     
-    def find_packetloss_indices(self):
+    #Label epochs above noise threshold
+    def find_packetloss_indices(self):   
         
         def packet_loss(epoch):
             mask = epoch.max() < self.noise_limit
@@ -29,22 +33,22 @@ class FindNoiseThreshold:
         def get_dataset(data):
             packet_loss_score = []
             for epoch in data:
-                packet_loss_score.append(0) if packet_loss(epoch) == True else packet_loss_score.append(6)
+                packet_loss_score.append(0) if packet_loss(epoch) == True else packet_loss_score.append(6) 
             return packet_loss_score
         
-        #label noise above 3000mV
-        split_epochs = np.split(self.unfiltered_data, self.number_of_epochs, axis = 1) 
+        split_epochs = np.split(self.data, self.num_epochs, axis = 1) 
         packet_loss_score = get_dataset(split_epochs) 
         noise_indices = []
         for idx, i in enumerate(packet_loss_score):
             if i == 6:
                 noise_indices.append(idx)
                 
-        #change identified noisy indices in brain state file 
+        #Change identified noisy indices in brain state file 
         self.brain_state_file.loc[noise_indices, 'brainstate'] = 6
-        return 
+        
+        return self.brain_state_file, noise_indices
     
-    def calc_slope_int_thresh(self):
+    def calc_noise_thresh(self, noise_indices):
         '''This function calculates the mean and standard dev which calculates
         the threshold over which to label an epoch as noisy or clean.
         '''
@@ -55,9 +59,9 @@ class FindNoiseThreshold:
         
         slope_ls = []
         intercept_ls = []
-        split_data = np.split(self.data, self.number_of_epochs, axis=1)
+        split_data = np.split(self.data, self.num_epochs, axis=1)
         for idx, epoch in enumerate(split_data):
-            if idx in self.noise_idx:
+            if idx in noise_indices:
                 pass
             else:
                 slope_int_res = [average_slope_intercept(chan) for chan in epoch]
