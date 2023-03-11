@@ -9,23 +9,29 @@ import sys
 
 class FindNoiseThreshold:
     
-    def __init__(self, packet_loss_indices, data, number_of_epochs):
-        self.packet_loss_indices = packet_loss_indices
-        self.data = data 
-        self.number_of_epochs = number_of_epochs
+    """Class to calculate the average gradient and intercept of the spectral slope.
+    
+    These variables will be used to determine the threshold for noise in the Filter class.
+    """
+    
+    def __init__(self, noise_idx, data, num_epochs):
+        self.noise_idx=noise_idx
+        self.data=data 
+        self.num_epochs=num_epochs
+    
     
     def calc_avg_slope(self):
         
         def average_slope_intercept(epoch):
-            freq, power = scipy.signal.welch(epoch, window = 'hann', fs = 250.4, nperseg = 1252)
+            freq, power = scipy.signal.welch(epoch, window='hann', fs=250.4, nperseg=1252)
             slope, intercept = np.polyfit(freq, power, 1)
             return slope, intercept
         
         slope_ls = []
         intercept_ls = []
-        split_data = np.split(self.data, self.number_of_epochs, axis = 1)
+        split_data = np.split(self.data, self.number_of_epochs, axis=1)
         for idx, epoch in enumerate(split_data):
-            if idx in self.packet_loss_indices:
+            if idx in self.noise_idx:
                 pass
             else:
                 slope_int_res = [average_slope_intercept(chan) for chan in epoch]
@@ -33,9 +39,19 @@ class FindNoiseThreshold:
                 slope_ls.append(slope_int_arr[0])
                 intercept_ls.append(slope_int_arr[1])
         
-        slope_mean = np.mean((np.array(slope_ls)), axis = 0)
-        int_mean = np.mean((np.array(intercept_ls)), axis = 0)
+        slope_mean = np.mean((np.array(slope_ls)), axis=0)
+        int_mean = np.mean((np.array(intercept_ls)), axis=0)
         std_slope = np.std(slope_mean, axis = 0)
         std_int = np.std(int_mean, axis = 0)
         
         return slope_mean, int_mean, std_slope, std_int
+
+    
+    def calc_noise_threshold(self, slope_mean, int_mean, std_slope, std_int):
+        
+        '''This function takes the slope mean for each channel and calculates
+        the mean and standard dev, thereby calculating the threshold over which
+        to label an epoch as noisy or clean.
+        '''
+        
+    
