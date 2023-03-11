@@ -50,8 +50,12 @@ class FindNoiseThreshold:
     def calc_noise_threshold(self, slope_mean, int_mean, std_slope, std_int):
         
         '''This function takes the slope mean for each channel and calculates
-        the mean and standard dev, thereby calculating the threshold over which
+        the mean and standard dev which calculates the threshold over which
         to label an epoch as noisy or clean.
         '''
+        std_int_max = int(std_int.max())
+        int_thresh = int(int_mean.max()) + 3*std_int_max
         
-    
+        slope_thresh = round(slope_mean.min() - 3*std_slope)
+        
+        return slope_thresh, int_thresh
