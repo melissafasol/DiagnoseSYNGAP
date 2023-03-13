@@ -19,10 +19,10 @@ class NoiseFilter:
     high = 100/nyquist
 
     
-    def __init__(self, unfiltered_data, num_epochs, brain_state_file, channelvariables,ch_type):
+    def __init__(self, unfiltered_data, brain_state_file, channelvariables,ch_type):
         self.unfiltered_data = unfiltered_data 
-        self.num_epochs = num_epochs                        #number of epochs to split raw data into 
         self.brain_state_file = brain_state_file                        #dataframe with brainstates  
+        self.num_epochs = len(brain_state_file)
         self.channel_variables = channelvariables                      #dictionary with channel types and channel variables 
         self.channel_types= channelvariables['channel_types']
         self.channel_numbers = channelvariables['channel_numbers']
@@ -112,6 +112,7 @@ class HarmonicsFilter:
         self.br_state_file = br_state_file
         self.br_state_num = br_state_num
         self.noise_array = noise_array      #Array with values cleaned from lin reg algo 
+        self.num_epochs = len(br_state_file)
     
     def harmonics_algo(self):
         
@@ -142,6 +143,7 @@ class HarmonicsFilter:
                     stdFilter[i] = np.std(filteredY[(i-lag+1):i+1])
 
             signal_calc = np.asarray(signals)
+            print(signal_calc)
             harmonic_1 = np.mean(signal_calc[25:50])
             harmonic_2 = np.mean(signal_calc[60:85])
             return harmonic_1, harmonic_2
@@ -149,17 +151,23 @@ class HarmonicsFilter:
     
         split_epochs = np.split(self.filtered_data, self.num_epochs, axis = 1)
         packet_loss = (self.br_state_file.query('brainstate == 6')).index.tolist()
-        br_calc = self.br_state_file[self.br_state_file['brainstate'] == self.br_number_num].index.tolist()
+        br_calc = self.br_state_file[self.br_state_file['brainstate'] == self.br_state_num].index.tolist()
+        total_noise = packet_loss + br_calc
         harmonic_indices = []
         for idx, epoch in enumerate(split_epochs):
-            if idx in packet_loss or self.noise_array:
-                        pass
+            print(idx)
+            if idx in total_noise:
+                print(idx)
+                pass
             elif idx in br_calc:
+                print('testing row shape of eeg channel')
                 power_calculations = signal.welch(epoch[2], window = 'hann', fs = 250.4, nperseg = 1252)
                 harmonic_1, harmonic_2 = thresholding_algo(y = power_calculations[1], lag = 30, threshold = 5, influence = 0)
                 if harmonic_1 and harmonic_2 > 0:
                     harmonic_indices.append(idx)
             else:
                 pass
+        
+        overall_noise_indices = total_noise + harmonic_indices
             
-        return harmonic_indices
+        return overall_noise_indices
