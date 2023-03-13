@@ -14,10 +14,11 @@ class FindNoiseThreshold:
     These variables will be used to determine the threshold for noise in the Filter class.
     """
     
-    def __init__(self, data, num_epochs, brain_state_file, noise_limit, channelvariables):
+    def __init__(self, data,  brain_state_file, br_number, noise_limit, channelvariables):
         self.data=data 
-        self.num_epochs=num_epochs
         self.brain_state_file = brain_state_file
+        self.num_epochs = len(brain_state_file)
+        self.br_number = br_number
         self.noise_limit = noise_limit          #threshold (mV) beyond which data is labelled as noise
         self.ch_variables = channelvariables        #dictionary with channel types and channel variables 
         self.channel_types= channelvariables['channel_types']
@@ -50,7 +51,7 @@ class FindNoiseThreshold:
     
     def calc_noise_thresh(self, noise_indices):
         '''This function calculates the mean and standard dev which calculates
-        the threshold over which to label an epoch as noisy or clean.
+        the threshold over which to label an epoch as noisy or clean per brainstate
         '''
         def average_slope_intercept(epoch):
             freq, power = scipy.signal.welch(epoch, window='hann', fs=250.4, nperseg=1252)
@@ -60,14 +61,18 @@ class FindNoiseThreshold:
         slope_ls = []
         intercept_ls = []
         split_data = np.split(self.data, self.num_epochs, axis=1)
+        br_number_indices = self.brain_state_file.loc[self.brain_state_file['brainstate'] == self.br_number].index.tolist()
         for idx, epoch in enumerate(split_data):
             if idx in noise_indices:
                 pass
-            else:
+            elif idx in br_number_indices:
                 slope_int_res = [average_slope_intercept(chan) for chan in epoch]
                 slope_int_arr = np.array(slope_int_res).T
                 slope_ls.append(slope_int_arr[0])
                 intercept_ls.append(slope_int_arr[1])
+            else:
+                pass
+        
         
         slope_mean = np.mean((np.array(slope_ls)), axis=0)
         int_mean = np.mean((np.array(intercept_ls)), axis=0)
