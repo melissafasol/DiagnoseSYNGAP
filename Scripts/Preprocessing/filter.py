@@ -72,7 +72,7 @@ class NoiseFilter:
             return noise_array, power_array    
         
         
-        def apply_lin_reg(bandpass_filtered_data, clean_br, br_number ): #, raw):
+        def apply_lin_reg(bandpass_filtered_data, clean_br, br_number ): 
             '''function applies lin_reg_calc function to entire time series and returns two arrays,
             one with noise labels and one with power calculation results'''
             split_epochs = np.split(bandpass_filtered_data, self.num_epochs, axis = 1)
@@ -101,5 +101,65 @@ class NoiseFilter:
             noise_array = np.array(noisy_indices)
             return power_array, noise_array
         
-        power_array, label_array = apply_lin_reg(bandpass_filtered_data, clean_br, br_number)
-        return power_array, label_array
+        power_array, noise_array = apply_lin_reg(bandpass_filtered_data, clean_br, br_number)
+        return power_array, noise_array
+    
+    
+class HarmonicsFilter:
+    
+    def __init__(self, filtered_data, br_state_file, br_state_num, noise_array):
+        self.filtered_data = filtered_data
+        self.br_state_file = br_state_file
+        self.br_state_num = br_state_num
+        self.noise_array = noise_array      #Array with values cleaned from lin reg algo 
+    
+    def harmonics_algo(self):
+        
+        '''Function to remove ictal epoch artifacts using z-score moving mean algorithm
+        '''
+        
+        def thresholding_algo( y, lag, threshold, influence):
+            signals = np.zeros(len(y))
+            filteredY = np.array(y)
+            avgFilter = [0]*len(y)
+            stdFilter = [0]*len(y)
+            avgFilter[lag - 1] = np.mean(y[0:lag])
+            stdFilter[lag - 1] = np.std(y[0:lag])
+            for i in range(lag, len(y)):
+                if abs(y[i] - avgFilter[i-1]) > threshold * stdFilter [i-1]:
+                    if y[i] > avgFilter[i-1]:
+                        signals[i] = 1
+                    else:
+                        signals[i] = -1
+
+                    filteredY[i] = influence * y[i] + (1 - influence) * filteredY[i-1]
+                    avgFilter[i] = np.mean(filteredY[(i-lag+1):i+1])
+                    stdFilter[i] = np.std(filteredY[(i-lag+1):i+1])
+                else:
+                    signals[i] = 0
+                    filteredY[i] = y[i]
+                    avgFilter[i] = np.mean(filteredY[(i-lag+1):i+1])
+                    stdFilter[i] = np.std(filteredY[(i-lag+1):i+1])
+
+            signal_calc = np.asarray(signals)
+            harmonic_1 = np.mean(signal_calc[25:50])
+            harmonic_2 = np.mean(signal_calc[60:85])
+            return harmonic_1, harmonic_2
+        
+    
+        split_epochs = np.split(self.filtered_data, self.num_epochs, axis = 1)
+        packet_loss = (self.br_state_file.query('brainstate == 6')).index.tolist()
+        br_calc = self.br_state_file[self.br_state_file['brainstate'] == self.br_number_num].index.tolist()
+        harmonic_indices = []
+        for idx, epoch in enumerate(split_epochs):
+            if idx in packet_loss or self.noise_array:
+                        pass
+            elif idx in br_calc:
+                power_calculations = signal.welch(epoch[2], window = 'hann', fs = 250.4, nperseg = 1252)
+                harmonic_1, harmonic_2 = thresholding_algo(y = power_calculations[1], lag = 30, threshold = 5, influence = 0)
+                if harmonic_1 and harmonic_2 > 0:
+                    harmonic_indices.append(idx)
+            else:
+                pass
+            
+        return harmonic_indices
