@@ -64,7 +64,7 @@ class NoiseFilter:
             freq, power = scipy.signal.welch(epoch, window = 'hann', fs = 250.4, nperseg = 1252)
             slope, intercept = np.polyfit(freq, power, 1)
             power_array.append(power)
-            if intercept > int_thresh or slope < slope_thresh:
+            if intercept > int_thresh and slope < slope_thresh:
                 noise_array.append(5)
             else:
                 noise_array.append(0)
@@ -143,7 +143,6 @@ class HarmonicsFilter:
                     stdFilter[i] = np.std(filteredY[(i-lag+1):i+1])
 
             signal_calc = np.asarray(signals)
-            print(signal_calc)
             harmonic_1 = np.mean(signal_calc[25:50])
             harmonic_2 = np.mean(signal_calc[60:85])
             return harmonic_1, harmonic_2
@@ -152,22 +151,52 @@ class HarmonicsFilter:
         split_epochs = np.split(self.filtered_data, self.num_epochs, axis = 1)
         packet_loss = (self.br_state_file.query('brainstate == 6')).index.tolist()
         br_calc = self.br_state_file[self.br_state_file['brainstate'] == self.br_state_num].index.tolist()
-        total_noise = packet_loss + br_calc
         harmonic_indices = []
         for idx, epoch in enumerate(split_epochs):
-            print(idx)
-            if idx in total_noise:
-                print(idx)
+            if idx in packet_loss:
                 pass
             elif idx in br_calc:
-                print('testing row shape of eeg channel')
                 power_calculations = signal.welch(epoch[2], window = 'hann', fs = 250.4, nperseg = 1252)
                 harmonic_1, harmonic_2 = thresholding_algo(y = power_calculations[1], lag = 30, threshold = 5, influence = 0)
-                if harmonic_1 and harmonic_2 > 0:
+                if harmonic_1 or harmonic_2 > 0:
                     harmonic_indices.append(idx)
             else:
                 pass
         
-        overall_noise_indices = total_noise + harmonic_indices
-            
-        return overall_noise_indices
+        total_noise = list(self.noise_array) + list(harmonic_indices)
+        
+        return total_noise
+    
+def remove_seizure_epochs(br_normal, seizure_br):
+    '''Function returns seizure indices '''
+    
+    def round_to_multiple(number, multiple):
+        return multiple*round(number/multiple)
+    
+    wake_br = br_normal.loc[br_normal['brainstate'] == 0]
+    wake_times = list(wake_br['start_epoch'].to_numpy()) + list(wake_br['end_epoch'].to_numpy())
+    
+    seiz_start = seizure_br['sec_start'].to_numpy()
+    seiz_end = seizure_br['sec_end'].to_numpy()
+    start_times_5 = [round_to_multiple(i, 5) for i in seiz_start] 
+    end_times_5 = [round_to_multiple(i, 5) for i in seiz_end] 
+    
+    seizure_times = list(start_times_5) + list(end_times_5)
+    
+    all_ictal_epochs = []
+    for seizure_epoch in seizure_times:
+        epoch_bins = 5
+        preceding_epochs = [seizure_epoch - epoch_bins*5, seizure_epoch - epoch_bins*4, seizure_epoch - epoch_bins*3, seizure_epoch - epoch_bins*2, seizure_epoch - epoch_bins]
+        following_epochs = [seizure_epoch + epoch_bins, seizure_epoch + epoch_bins*2, seizure_epoch + epoch_bins*3, seizure_epoch + epoch_bins*4, seizure_epoch + epoch_bins*5 ]
+        all_ictal_epochs.extend(preceding_epochs + [seizure_epoch] + following_epochs)
+    
+    seizure_indices = []
+    for epoch_time, epoch_idx in zip(wake_br['start_epoch'].to_numpy(), wake_br.index.to_list()):
+        if epoch_time in all_ictal_epochs:
+            seizure_indices.append(epoch_idx)
+        else:
+            pass
+        
+    br_normal.loc[seizure_indices, 'brainstate'] = 4
+    
+    return br_normal
