@@ -174,7 +174,6 @@ def remove_seizure_epochs(br_normal, seizure_br):
         return multiple*round(number/multiple)
     
     wake_br = br_normal.loc[br_normal['brainstate'] == 0]
-    wake_times = list(wake_br['start_epoch'].to_numpy()) + list(wake_br['end_epoch'].to_numpy())
     
     seiz_start = seizure_br['sec_start'].to_numpy()
     seiz_end = seizure_br['sec_end'].to_numpy()
