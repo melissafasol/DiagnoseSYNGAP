@@ -9,12 +9,12 @@ import matplotlib.pyplot as plt
 
 sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/GRIN2B/scripts')
 from GRIN2B_constants import start_time_GRIN2B_baseline, end_time_GRIN2B_baseline, br_animal_IDs, seizure_free_IDs, GRIN_het_IDs
-from prepare_files import PrepareGRIN2B, LoadGRIN2B, GRIN2B_Seizures
 
 sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/taini_main/scripts/Preprocessing')
 from preproc2_extractbrainstate import ExtractBrainStateIndices
 
 sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Scripts/Preprocessing')
+from load_files import LoadFiles
 from filter import NoiseFilter, HarmonicsFilter, remove_seizure_epochs
 from exploratory import FindNoiseThreshold
 
@@ -29,11 +29,8 @@ br_number = 0
 
 for animal in GRIN_wt_IDs:
     animal = str(animal)
-    prepare = PrepareGRIN2B(directory_path, animal)
-    recording, brain_state_1, brain_state_2 = prepare.load_two_analysis_files( seizure = 'False')
-    start_time_1, start_time_2, end_time_1, end_time_2 = prepare.get_start_end_times(start_times_GRIN2B_dict = start_time_GRIN2B_baseline, end_times_GRIN2B_dict = end_time_GRIN2B_baseline)
-    data_1 = recording[:, start_time_1: end_time_1 + 1]
-    data_2 = recording[:, start_time_2: end_time_2 + 1]
+    load_files = LoadFiles(directory_path, animal)
+    data_1, data_2, brain_state_1, brain_state_2 = load_files.load_two_analysis_files(start_times_dict = start_time_GRIN2B_baseline, end_times_dict = end_time_GRIN2B_baseline)
     print('all files loaded')
     if animal in seizure_free_IDs:
         explor_test_1 = FindNoiseThreshold(data = data_1, br_number = br_number, brain_state_file = brain_state_1,noise_limit = 3000, channelvariables = channel_variables)
