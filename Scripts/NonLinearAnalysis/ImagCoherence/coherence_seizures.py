@@ -11,8 +11,10 @@ sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Scrip
 from load_files import LoadFiles
 from filter import NoiseFilter, HarmonicsFilter, remove_seizure_epochs
 from exploratory import FindNoiseThreshold
+from constants import start_time_GRIN2B_baseline, end_time_GRIN2B_baseline, channel_variables
+from coherence import coherence_arrays
 
-sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Scripts/LinearAnalysis')
+sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Scripts/NonLinearAnalysis/ImagCoherence')
 from coherence import reshape_coherence_array
 
 directory_path = '/home/melissa/PREPROCESSING/GRIN2B/GRIN2B_numpy'

@@ -174,3 +174,8 @@ CDKL5_baseline_end = {'2024_1A': 39993888, '2025_1A': 39993888,
                     '2323_2A': 57782304, '2324_2A': 57782304, 
                     '2328_2A': 61418112, '2321_2A': 61418112}
 
+
+
+channel_variables = {'channel_numbers': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+                     'channel_types' : ['eeg', 'emg', 'eeg', 'eeg', 'eeg','eeg', 'eeg','eeg', 'eeg','eeg', 'eeg',
+                    'eeg', 'eeg','eeg', 'emg', 'eeg']}

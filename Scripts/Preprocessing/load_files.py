@@ -53,6 +53,5 @@ class LoadFiles():
         split_epochs = np.split(recording, len(br_state_file), axis = 1)
         br_indices = br_state_file.loc[br_state_file['brainstate'] == br_number].index.to_list()
         br_epochs = np.array(split_epochs)[br_indices]
-    
         return br_epochs
         
