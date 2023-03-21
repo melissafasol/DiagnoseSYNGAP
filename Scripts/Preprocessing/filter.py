@@ -55,7 +55,7 @@ class NoiseFilter:
         return bandpass_filtered_data
 
     
-    def power_calc_noise(self, bandpass_filtered_data, slope_thresh, int_thresh, clean_br, br_number):
+    def power_calc_noise(self, bandpass_filtered_data, slope_thresh, int_thresh, clean_br ):#, br_number):
         
         def lin_reg_calc(epoch):
             noise_array = []
@@ -72,18 +72,18 @@ class NoiseFilter:
             return noise_array, power_array    
         
         
-        def apply_lin_reg(bandpass_filtered_data, clean_br, br_number ): 
+        def apply_lin_reg(bandpass_filtered_data, clean_br ):#, br_number): 
             '''function applies lin_reg_calc function to entire time series and returns two arrays,
             one with noise labels and one with power calculation results'''
             split_epochs = np.split(bandpass_filtered_data, self.num_epochs, axis = 1)
             noisy_indices = []
             power_calc = []
             packet_loss = (clean_br.query('brainstate == 6')).index.tolist()
-            br_calc = clean_br[clean_br['brainstate'] == br_number].index.tolist()
+           #br_calc = clean_br[clean_br['brainstate'] == br_number].index.tolist()
             for idx, epoch in enumerate(split_epochs):
                 if idx in packet_loss:
                     pass
-                elif idx in br_calc:
+                else: #idx in br_calc:
                     channel_arrays = []
                     for chan in epoch:
                             power= lin_reg_calc(chan)
@@ -94,14 +94,14 @@ class NoiseFilter:
                     else:
                         one_epoch_power = np.vstack(one_epoch_arrays[1][0])
                         power_calc.append(one_epoch_power)
-                else:
-                    pass
+                #else:
+                #    pass
             
             power_array = np.array(power_calc)
             noise_array = np.array(noisy_indices)
             return power_array, noise_array
         
-        power_array, noise_array = apply_lin_reg(bandpass_filtered_data, clean_br, br_number)
+        power_array, noise_array = apply_lin_reg(bandpass_filtered_data, clean_br ) #, br_number)
         return power_array, noise_array
     
     
@@ -150,18 +150,18 @@ class HarmonicsFilter:
     
         split_epochs = np.split(self.filtered_data, self.num_epochs, axis = 1)
         packet_loss = (self.br_state_file.query('brainstate == 6')).index.tolist()
-        br_calc = self.br_state_file[self.br_state_file['brainstate'] == self.br_state_num].index.tolist()
+        #br_calc = self.br_state_file[self.br_state_file['brainstate'] == self.br_state_num].index.tolist()
         harmonic_indices = []
         for idx, epoch in enumerate(split_epochs):
             if idx in packet_loss:
                 pass
-            elif idx in br_calc:
+            else: #idx in br_calc:
                 power_calculations = signal.welch(epoch[2], window = 'hann', fs = 250.4, nperseg = 1252)
                 harmonic_1, harmonic_2 = thresholding_algo(y = power_calculations[1], lag = 30, threshold = 5, influence = 0)
                 if harmonic_1 or harmonic_2 > 0:
                     harmonic_indices.append(idx)
-            else:
-                pass
+            #else:
+            #    pass
         
         total_noise = list(self.noise_array) + list(harmonic_indices)
         
