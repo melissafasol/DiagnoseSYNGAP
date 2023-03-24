@@ -1,3 +1,4 @@
 .ipynb_checkpoints
 Scripts/Preprocessing/__pycache__/
 Scripts/LinearAnalysis/__pycache__/
+Scripts/NonLinearAnalysis/Entropy/__pycache__/
