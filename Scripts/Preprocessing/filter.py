@@ -64,7 +64,7 @@ class NoiseFilter:
             freq, power = scipy.signal.welch(epoch, window = 'hann', fs = 250.4, nperseg = 1252)
             slope, intercept = np.polyfit(freq, power, 1)
             power_array.append(power)
-            if intercept > int_thresh and slope < slope_thresh:
+            if intercept > int_thresh or slope < slope_thresh:
                 noise_array.append(5)
             else:
                 noise_array.append(0)
@@ -89,7 +89,7 @@ class NoiseFilter:
                             power= lin_reg_calc(chan)
                             channel_arrays.append(power)
                     one_epoch_arrays = np.dstack(channel_arrays)
-                    if one_epoch_arrays[0][0][0] == 5:
+                    if one_epoch_arrays[0][0][2] == 5:
                         noisy_indices.append(idx)
                     else:
                         one_epoch_power = np.vstack(one_epoch_arrays[1][0])
