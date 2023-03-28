@@ -10,10 +10,7 @@ from sklearn.metrics import r2_score
 from neurodsp.utils import create_times
 
 
-
-
-
-class FilterCFC():
+class FilterCFC:
     
     order = 3
     sampling_rate = 250.4
@@ -36,7 +33,7 @@ class FilterCFC():
         
         return filtered_data
     
-class ExtractThetaTroughIndices():
+class ExtractThetaTroughIndices:
     
     sampling_rate = 250.4
 
