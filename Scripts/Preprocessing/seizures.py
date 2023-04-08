@@ -34,7 +34,7 @@ class Seizures:
         seiz_start = [int(br_file['sec_start'][value]*self.sampling_rate) for value in long_indices]
         seiz_end = [int(br_file['sec_end'][value]*self.sampling_rate) for value in long_indices]    
         epoch_ls = [data_file[:, start:end] for start, end in zip(seiz_start, seiz_end)]
-        return epoch_ls
+        return seiz_start, seiz_end, epoch_ls
     
     
     
