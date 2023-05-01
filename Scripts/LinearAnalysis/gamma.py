@@ -25,7 +25,7 @@ def gamma(dat_array):
     for epoch in dat_array:
             freq, power = scipy.signal.welch(epoch, window='hann', fs=250.4, nperseg=1252)
             #freq_interest (30 - 48Hz, 30/0.2 = 150: 48/0.2 = 240)
-            freq_gamma = power[151:241]
+            freq_gamma = np.mean(power[151:241])
             gamma_power_ls.append(freq_gamma)
     
     gamma_array = np.array(gamma_power_ls)
@@ -35,9 +35,11 @@ def gamma(dat_array):
 directory_path = '/home/melissa/PREPROCESSING/GRIN2B/GRIN2B_numpy'
 results_path = '/home/melissa/RESULTS/XGBoost/Gamma_Power/'
 
-GRIN2B_ID_list = [ '138', '140', '402', '228', '238',
-                 '363', '367', '378', '129', '137', '239', '383', '364'] 
-                 #368, 132
+GRIN2B_ID_list = ['131', '229', '236', '237', '241', '362', '366', '368', 
+                    '369', '373', '132', '138', '140', '402', '228', '238',
+                    '363', '367', '378', '129', '137', '239', '383', '364',
+                    '365', '371', '382', '404', '130', '139', '401', '240',
+                    '227', '375', '424', '433', '430'] 
 
 for animal in GRIN2B_ID_list:
     print('loading ' + str(animal))
