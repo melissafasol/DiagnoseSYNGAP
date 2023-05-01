@@ -7,16 +7,13 @@ from scipy import average, gradient, signal
 import sys 
 import matplotlib.pyplot as plt
 
-sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/GRIN2B/scripts')
-from GRIN2B_constants import start_time_GRIN2B_baseline, end_time_GRIN2B_baseline, br_animal_IDs, seizure_free_IDs, GRIN_het_IDs
-
-sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/taini_main/scripts/Preprocessing')
-from preproc2_extractbrainstate import ExtractBrainStateIndices
 
 sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Scripts/Preprocessing')
 from load_files import LoadFiles
 from filter import NoiseFilter, HarmonicsFilter, remove_seizure_epochs
 from exploratory import FindNoiseThreshold
+from constants import start_time_GRIN2B_baseline, end_time_GRIN2B_baseline, GRIN_het_IDs, GRIN2B_ID_list, GRIN2B_seiz_free_IDs, channel_variables
+from coherence import coherence_arrays
 
 
 directory_path = '/home/melissa/PREPROCESSING/GRIN2B/GRIN2B_numpy'

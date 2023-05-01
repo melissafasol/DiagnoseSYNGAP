@@ -21,6 +21,10 @@ from spec_slope_functions import SpectralSlope
 directory_path = '/home/melissa/PREPROCESSING/GRIN2B/GRIN2B_numpy'
 results_path = '/home/melissa/RESULTS/XGBoost/FOOOF/'
 
+GRIN2B_ID_list = [ '138', '140', '402', '228', '238',
+                 '363', '367', '378', '129', '137', '239', '383', '364'] 
+                 #368, 132
+
 for animal in GRIN2B_ID_list:
     print('loading ' + str(animal))
     animal = str(animal)
