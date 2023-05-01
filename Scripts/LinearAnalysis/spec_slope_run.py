@@ -43,13 +43,15 @@ for animal in GRIN2B_ID_list:
     spec_slope_2 = SpectralSlope(chan2_filter_2)
     power_arr_1 = spec_slope_1.power_calc()
     power_arr_2 = spec_slope_2.power_calc()
-    aperiodic_1 = spec_slope_1.fooof_analysis(power_arr_1)
+    offset_1, exponent_1 = spec_slope_1.fooof_analysis(power_arr_1)
     print(str(animal) + 'aperiodic br 1 complete')
-    aperiodic_2 = spec_slope_2.fooof_analysis(power_arr_2)
+    offset_2, exponent_2 = spec_slope_2.fooof_analysis(power_arr_2)
     print(str(animal) + ' aperiodic br 2 complete')
     os.chdir(results_path)
-    np.save(str(animal) + '_BR1.npy', power_arr_1)
-    np.save(str(animal) + '_BR2.npy', power_arr_2)
+    np.save(str(animal) + 'offset_BR1.npy', offset_1)
+    np.save(str(animal) + 'offset_BR2.npy', offset_2)
+    np.save(str(animal) + 'exponent_BR1.npy', exponent_1)
+    np.save(str(animal) + 'exponent_BR2.npy', exponent_2)
 
     
     

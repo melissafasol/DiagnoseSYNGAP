@@ -32,14 +32,17 @@ class SpectralSlope:
         frequency_range = [0.2, 48]
         frequency_values = np.arange(0.2, 48.2, 0.2)
         
-        fooof_ls = []
+        offset_ls = []
+        exponent_ls = []
         for epoch in power_array:
             fm = FOOOF()
             fm.report(frequency_values, epoch, frequency_range)
             aperiodic_values = fm.aperiodic_params_
-            fooof_ls.append(aperiodic_values)
+            offset_ls.append(aperiodic_values[0])
+            exponent_ls.append(aperiodic_values[1])
             
-        fooof_array = np.array(fooof_ls)
-        return fooof_array
+        offset_array = np.array(offset_ls)
+        exponent_array = np.array(exponent_ls)
+        return offset_array, exponent_array
         
         
