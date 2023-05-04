@@ -3,3 +3,4 @@ Scripts/Preprocessing/__pycache__/
 Scripts/LinearAnalysis/__pycache__/
 Scripts/NonLinearAnalysis/Entropy/__pycache__/
 Scripts/LinearAnalysis/CrossFrequencyCoupling/__pycache__/
+Scripts/XGBoost/__pycache__/
