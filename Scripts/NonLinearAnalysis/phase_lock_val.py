@@ -19,8 +19,7 @@ from constants import start_time_GRIN2B_baseline, end_time_GRIN2B_baseline, GRIN
 directory_path = '/home/melissa/PREPROCESSING/GRIN2B/GRIN2B_numpy'
 results_path = '/home/melissa/RESULTS/XGBoost/Phase_Lock_Val/'
 
-GRIN2B_ID_list = ['131', '229', '236', '237', '241', '362', '366', '368', 
-                    '369', '373', '132', '138', '140', '402', '228', '238',
+GRIN2B_ID_list = ['369', '373', '132', '138', '140', '402', '228', '238',
                     '363', '367', '378', '129', '137', '239', '383', '364',
                     '365', '371', '382', '404', '130', '139', '401', '240',
                     '227', '375', '424', '433', '430'] 
