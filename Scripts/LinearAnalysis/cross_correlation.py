@@ -20,11 +20,14 @@ from constants import start_time_GRIN2B_baseline, end_time_GRIN2B_baseline, GRIN
 directory_path = '/home/melissa/PREPROCESSING/GRIN2B/GRIN2B_numpy'
 results_path = '/home/melissa/RESULTS/XGBoost/Cross_Corr/'
 
-GRIN2B_ID_list = ['131', '229', '236', '237', '241', '362', '366', '368', 
-                    '369', '373', '132', '138', '140', '402', '228', '238',
-                    '363', '367', '378', '129', '137', '239', '383', '364',
-                    '365', '371', '382', '404', '130', '139', '401', '240',
-                    '227', '375', '424', '433', '430'] 
+GRIN2B_ID_list = ['131', '229', '368', '132', '367', '129',
+                  '137', '382', '139', '401', '430']
+
+                    #['131', '229', '236', '237', '241', '362', '366', '368', 
+                    #'369', '373', '132', '138', '140', '402', '228', '238',
+                    #'363', '367', '378', '129', '137', '239', '383', '364',
+                    #'365', '371', '382', '404', '130', '139', '401', '240',
+                    #'227', '375', '424', '433', '430'] 
 
 for animal in GRIN2B_ID_list:
         print('loading ' + str(animal))
@@ -42,16 +45,17 @@ for animal in GRIN2B_ID_list:
         filter_2 = np.moveaxis(np.array(np.split(bandpass_filtered_data_2, 17280, axis = 1)), 1, 0)
         cross_corr_ls_1 = []
         cross_corr_ls_2 = []
-        try:
-            for i in np.arange(0, 17280, 1):
+        for i in np.arange(0, 17280, 1):
+            try:
                 cross_corr_ls_1.append(compute_max_cross_corr(sfreq = 250.4, data = filter_1[:, i]))
                 cross_corr_ls_2.append(compute_max_cross_corr(sfreq = 250.4, data = filter_1[:, i]))
-        
-            cross_corr_1 = np.array(cross_corr_ls_1)
-            cross_corr_2 = np.array(cross_corr_ls_2)
-            os.chdir(results_path)
-            np.save(animal + '_cross_corr_1.npy', cross_corr_1)
-            np.save(animal + '_cross_corr_2.npy', cross_corr_2)
-            print('cross correlation values for ' + animal + ' saved')
-        except:
-            print(animal + ' error for index ' + i)
+            except:
+                print(str(animal) + ' error for index ' + str(i))
+                pass
+        cross_corr_1 = np.array(cross_corr_ls_1)
+        cross_corr_2 = np.array(cross_corr_ls_2)
+        os.chdir(results_path)
+        np.save(animal + '_cross_corr_1.npy', cross_corr_1)
+        np.save(animal + '_cross_corr_2.npy', cross_corr_2)
+        print('cross correlation values for ' + animal + ' saved')
+            
