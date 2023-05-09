@@ -36,10 +36,22 @@ for animal in GRIN2B_ID_list:
     bandpass_filtered_data_1 = noise_filter_1.filter_data_type()
     bandpass_filtered_data_2 = noise_filter_2.filter_data_type()
     print('data filtered')
-    chan2_filter_1 = np.array(np.split(bandpass_filtered_data_1[2], 17280, axis = 0))
-    chan2_filter_2 = np.array(np.split(bandpass_filtered_data_2[2], 17280, axis = 0))
-    hurst_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in chan2_filter_1]
-    hurst_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in chan2_filter_2]
+    somatosensory_1_1 = np.array(np.split(bandpass_filtered_data_1[0], 17280, axis = 0))
+    somatosensory_2_1 = np.array(np.split(bandpass_filtered_data_1[6], 17280, axis = 0))
+    somatosensory_3_1 = np.array(np.split(bandpass_filtered_data_1[9], 17280, axis = 0))
+    somatosensory_4_1 = np.array(np.split(bandpass_filtered_data_1[14], 17280, axis = 0))
+    somatosensory_1_2 = np.array(np.split(bandpass_filtered_data_2[0], 17280, axis = 0))
+    somatosensory_2_2 = np.array(np.split(bandpass_filtered_data_2[6], 17280, axis = 0))
+    somatosensory_3_2 = np.array(np.split(bandpass_filtered_data_2[9], 17280, axis = 0))
+    somatosensory_4_2 = np.array(np.split(bandpass_filtered_data_2[14], 17280, axis = 0))
+    hurst_1_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_1_1]
+    hurst_2_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_2_1]
+    hurst_3_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_3_1]
+    hurst_4_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_4_1]
+    hurst_1_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_1_2]
+    hurst_2_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_2_2]
+    hurst_3_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_3_2]
+    hurst_4_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_4_2]
     hurst_array_1 = np.array(hurst_1)
     hurst_array_2 = np.array(hurst_2)
     hurst_array = np.concatenate((hurst_array_1, hurst_array_2), axis = 0)
