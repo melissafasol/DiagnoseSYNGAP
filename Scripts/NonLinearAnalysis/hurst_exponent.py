@@ -16,15 +16,19 @@ from exploratory import FindNoiseThreshold
 from constants import start_time_GRIN2B_baseline, end_time_GRIN2B_baseline, GRIN_het_IDs, GRIN2B_ID_list, GRIN2B_seiz_free_IDs, channel_variables, GRIN_wt_IDs
 
 directory_path = '/home/melissa/PREPROCESSING/GRIN2B/GRIN2B_numpy'
-results_path = '/home/melissa/RESULTS/XGBoost/Hurst/'
+results_path = '/home/melissa/RESULTS/XGBoost/Motor/Hurst'
 
-GRIN2B_ID_list = ['131', '229', '236', '237', '241', '362', '366', '368', 
+GRIN2B_ID_list = [ '237', '241', '362', '366', '368', 
                     '369', '373', '132', '138', '140', '402', '228', '238',
                     '363', '367', '378', '129', '137', '239', '383', '364',
                     '365', '371', '382', '404', '130', '139', '401', '240',
-                    '227', '375', '424', '433', '430'] 
+                    '227', '375', '424', '433', '430', '131', '229', '236']
+
+Motor = [1,2,3,10,11,12]
+
 
 for animal in GRIN2B_ID_list:
+    print('motor starting')
     print('loading ' + str(animal))
     animal = str(animal)
     load_files = LoadFiles(directory_path, animal)
@@ -35,26 +39,39 @@ for animal in GRIN2B_ID_list:
     noise_filter_2 = NoiseFilter(data_2, brain_state_file = brain_state_2, channelvariables = channel_variables,ch_type = 'eeg')    
     bandpass_filtered_data_1 = noise_filter_1.filter_data_type()
     bandpass_filtered_data_2 = noise_filter_2.filter_data_type()
-    print('data filtered')
-    somatosensory_1_1 = np.array(np.split(bandpass_filtered_data_1[0], 17280, axis = 0))
-    somatosensory_2_1 = np.array(np.split(bandpass_filtered_data_1[6], 17280, axis = 0))
-    somatosensory_3_1 = np.array(np.split(bandpass_filtered_data_1[9], 17280, axis = 0))
-    somatosensory_4_1 = np.array(np.split(bandpass_filtered_data_1[14], 17280, axis = 0))
-    somatosensory_1_2 = np.array(np.split(bandpass_filtered_data_2[0], 17280, axis = 0))
-    somatosensory_2_2 = np.array(np.split(bandpass_filtered_data_2[6], 17280, axis = 0))
-    somatosensory_3_2 = np.array(np.split(bandpass_filtered_data_2[9], 17280, axis = 0))
-    somatosensory_4_2 = np.array(np.split(bandpass_filtered_data_2[14], 17280, axis = 0))
-    hurst_1_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_1_1]
-    hurst_2_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_2_1]
-    hurst_3_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_3_1]
-    hurst_4_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_4_1]
-    hurst_1_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_1_2]
-    hurst_2_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_2_2]
-    hurst_3_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_3_2]
-    hurst_4_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in somatosensory_4_2]
-    hurst_array_1 = np.array(hurst_1)
-    hurst_array_2 = np.array(hurst_2)
-    hurst_array = np.concatenate((hurst_array_1, hurst_array_2), axis = 0)
+    print('data filtered')        
+    filter_1_1 = np.array(np.split(bandpass_filtered_data_1[1], 17280, axis = 0))
+    filter_2_1 = np.array(np.split(bandpass_filtered_data_1[2], 17280, axis = 0))
+    filter_3_1 = np.array(np.split(bandpass_filtered_data_1[3], 17280, axis = 0))
+    filter_10_1 = np.array(np.split(bandpass_filtered_data_1[10], 17280, axis = 0))
+    filter_11_1 = np.array(np.split(bandpass_filtered_data_1[11], 17280, axis = 0))
+    filter_12_1 = np.array(np.split(bandpass_filtered_data_1[12], 17280, axis = 0))
+    
+    filter_1_2 = np.array(np.split(bandpass_filtered_data_2[1], 17280, axis = 0))
+    filter_2_2 = np.array(np.split(bandpass_filtered_data_2[2], 17280, axis = 0))
+    filter_3_2 = np.array(np.split(bandpass_filtered_data_2[3], 17280, axis = 0))
+    filter_10_2 = np.array(np.split(bandpass_filtered_data_2[10], 17280, axis = 0))
+    filter_11_2 = np.array(np.split(bandpass_filtered_data_2[11], 17280, axis = 0))
+    filter_12_2 = np.array(np.split(bandpass_filtered_data_2[12], 17280, axis = 0))
+    
+    hurst_1_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in filter_1_1]
+    hurst_2_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in filter_2_1]
+    hurst_3_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in filter_3_1]
+    hurst_10_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in filter_10_1]
+    hurst_11_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in filter_11_1]
+    hurst_12_1 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in filter_10_1]
+    
+    hurst_1_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in filter_1_2]
+    hurst_2_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in filter_2_2]
+    hurst_3_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in filter_3_2]
+    hurst_10_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in filter_10_2]
+    hurst_11_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in filter_11_2]
+    hurst_12_2 = [compute_hurst_exp(np.expand_dims(epoch, axis = 0)) for epoch in filter_10_2]
+    
+    print('all channels calculated')
+    mean_array_1 = np.mean(np.array([hurst_1_1, hurst_2_1, hurst_3_1, hurst_10_1, hurst_11_1, hurst_12_1]), axis = 0)
+    mean_array_2 = np.mean(np.array([hurst_1_2, hurst_2_2, hurst_3_2, hurst_10_2, hurst_11_2, hurst_12_2]), axis = 0)
+    hurst_array = np.concatenate((mean_array_1, mean_array_2), axis = 0)
     os.chdir(results_path)
     np.save(animal + '_hurst_concat.npy', hurst_array)
     print(animal + ' saved')
