@@ -34,15 +34,24 @@ class SpectralSlope:
         
         offset_ls = []
         exponent_ls = []
-        for epoch in power_array:
-            fm = FOOOF()
-            fm.report(frequency_values, epoch, frequency_range)
-            aperiodic_values = fm.aperiodic_params_
-            offset_ls.append(aperiodic_values[0])
-            exponent_ls.append(aperiodic_values[1])
+        error_idx = []
+        
+        for i, epoch in enumerate(power_array):
+            try: 
+                fm = FOOOF()
+                fm.report(frequency_values, epoch, frequency_range)
+                aperiodic_values = fm.aperiodic_params_
+                offset_ls.append(aperiodic_values[0])
+                exponent_ls.append(aperiodic_values[1])
+            except:
+                print('error at index ' + str(i))
+                error_idx.append(i)
+                
             
         offset_array = np.array(offset_ls)
         exponent_array = np.array(exponent_ls)
-        return offset_array, exponent_array
+        error_array = np.array(error_idx)
+        
+        return offset_array, exponent_array, error_array
         
         
