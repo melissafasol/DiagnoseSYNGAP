@@ -218,6 +218,13 @@ SYNGAP_baseline_end = {'S7063_1A': 36959040, 'S7063_2A': 58593600,
                        'S7101_1A': 56880864, 'S7101_2A': 78515424}
 
 
+channels_dict = {'S1Tr_RIGHT': [0], 'EMG_RIGHT':[1], 'M2_FrA_RIGHT':[2],
+                 'M2_ant_RIGHT':[3],'M1_ant_RIGHT':[4], 'V2ML_RIGHT':[5],
+                 'V1M_RIGHT':[6], 'S1HL_S1FL_RIGHT':[7], 'V1M_LEFT':[8],
+                 'V2ML_LEFT':[9], 'S1HL_S1FL_LEFT':[10], 'M1_ant_LEFT':[11],
+                 'M2_ant_LEFT':[12],'M2_FrA_LEFT':[13], 'EMG_LEFT':[14],
+                 'S1Tr_LEFT':[15]}
+
 
 channel_variables = {'channel_numbers': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
                      'channel_types' : ['eeg', 'emg', 'eeg', 'eeg', 'eeg','eeg', 'eeg','eeg', 'eeg','eeg', 'eeg',
