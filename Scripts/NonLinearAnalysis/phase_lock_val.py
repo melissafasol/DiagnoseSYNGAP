@@ -19,10 +19,6 @@ from constants import start_time_GRIN2B_baseline, end_time_GRIN2B_baseline, GRIN
 directory_path = '/home/melissa/PREPROCESSING/GRIN2B/GRIN2B_numpy'
 results_path = '/home/melissa/RESULTS/XGBoost/Phase_Lock_Val/'
 
-GRIN2B_ID_list = ['369', '373', '132', '138', '140', '402', '228', '238',
-                    '363', '367', '378', '129', '137', '239', '383', '364',
-                    '365', '371', '382', '404', '130', '139', '401', '240',
-                    '227', '375', '424', '433', '430'] 
 
 for animal in GRIN2B_ID_list:
     print('loading ' + str(animal))
@@ -40,12 +36,26 @@ for animal in GRIN2B_ID_list:
     filter_2 = np.moveaxis(np.array(np.split(bandpass_filtered_data_2, 17280, axis = 1)), 1, 0)
     phase_lock_val_ls_1 = []
     phase_lock_val_ls_2 = []
+    error_1_ls = []
+    error_2_ls = []
     for i in np.arange(0, 17280, 1):
-        phase_lock_val_ls_1.append(compute_phase_lock_val(filter_1[:, i]))
-        phase_lock_val_ls_2.append(compute_phase_lock_val(filter_1[:, i]))
+        try:
+            phase_lock_val_ls_1.append(compute_phase_lock_val(filter_1[:, i]))
+        except:
+            print(str(animal) + ' error for index ' + str(i) + ' br 1')
+            error_1_ls.append(i)
+        try:
+            phase_lock_val_ls_2.append(compute_phase_lock_val(filter_2[:, i]))
+        except:
+            print(str(animal) + ' error for index ' + str(i) + ' br 2')
+            error_2_ls.append(i)
     phase_lock_1 = np.array(phase_lock_val_ls_1)
     phase_lock_2 = np.array(phase_lock_val_ls_2)
+    error_1 = np.array(error_1_ls)
+    error_2 = np.array(error_2_ls)
     os.chdir(results_path)
-    np.save(animal + 'phase_lock_1.npy', phase_lock_1)
-    np.save(animal + 'phase_lock_2.npy', phase_lock_2)
+    np.save(animal + '_phase_lock_1.npy', phase_lock_1)
+    np.save(animal + '_phase_lock_2.npy', phase_lock_2)
+    np.save(animal + '_error_1.npy', error_1)
+    np.save(animal + '_error_2.npy', error_2)
     print('phase lock values for ' + animal + ' saved')
