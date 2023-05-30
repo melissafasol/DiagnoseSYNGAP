@@ -1,6 +1,7 @@
 import pandas as pd
 
 from hyperopt import fmin, tpe, hp, STATUS_OK, Trials 
+from hyperopt import fmin, tpe, hp, Trials
 from sklearn.metrics import accuracy_score, roc_auc_score
 
 from typing import Any, Dict, Union, Sequence
@@ -105,4 +106,5 @@ def trial2df(trial: Sequence[Dict[str, Any]]) -> pd.DataFrame:
         vals.append(val)
         
     return pd.DataFrame(vals)
+
 
