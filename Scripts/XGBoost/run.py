@@ -1,4 +1,5 @@
 import os 
+import pickle
 import pandas as pd
 import numpy as np
 import math
@@ -622,7 +623,9 @@ for round in rounds:
                )
     params = {**params, **best}
     all_trials.append(trials)
-
-os.chdir('/home/melissa/RESULTS/XGBoost')
-all_trials = np.array(all_trials)
-np.save('hyperparameter_tuning_parameters.npy', all_trials)
+    
+    print(best)
+    
+# The trials database now contains 100 entries, it can be saved/reloaded with pickle or another method
+pickle.dump(all_trials, open("hyperopt_params.p", "wb"))
+#trials = pickle.load(open("hyperopt_params.p", "rb"))
