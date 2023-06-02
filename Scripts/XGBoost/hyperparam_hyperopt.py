@@ -12,7 +12,7 @@ def hyperparameter_tuning(space: Dict[str, Union[float, int]],
                          X_train: pd.DataFrame, y_train: pd.Series, 
                          X_test: pd.DataFrame, y_test: pd.Series, 
                          early_stopping_rounds: int = 50, 
-                         metric: callable = accuracy_score) -> Dict[str, Any]:
+                         metric: callable = roc_auc_score) -> Dict[str, Any]:
     
     '''Perform hyperparameter runing for an XGBoost classifier. 
     
