@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score, roc_auc_score
 
 from typing import Any, Dict, Union, Sequence
 import xgboost as xgb
-
+from sklearn import metrics
 
 def hyperparameter_tuning(space: Dict[str, Union[float, int]],
                          X_train: pd.DataFrame, y_train: pd.Series, 
@@ -59,8 +59,7 @@ def hyperparameter_tuning(space: Dict[str, Union[float, int]],
                  (X_test, y_test)]
     model.fit(X_train, y_train, eval_set = evaluation, verbose = False)
     
-    pred = model.predict(X_test)
-    score = metric(y_test, pred)
+    score = metrics.roc_auc_score(y_test, model.predict(X_test))
     return {'loss': -score, 'status': STATUS_OK, 'model': model}
     
 
