@@ -29,8 +29,8 @@ class SpectralSlope:
     
     def fooof_analysis(self, power_array):
         
-        frequency_range = [0.2, 48]
-        frequency_values = np.arange(0.2, 48.2, 0.2)
+        frequency_range = [0, 48]
+        frequency_values = np.arange(0, 48.2, 0.2)
         
         offset_ls = []
         exponent_ls = []
@@ -39,7 +39,9 @@ class SpectralSlope:
         for i, epoch in enumerate(power_array):
             try: 
                 fm = FOOOF()
-                fm.report(frequency_values, epoch, frequency_range)
+                fm.fit(frequency_values, epoch, frequency_range)
+                #FOOOF_results = fm.get_reults() 
+                #print(FOOOF_results)
                 aperiodic_values = fm.aperiodic_params_
                 offset_ls.append(aperiodic_values[0])
                 exponent_ls.append(aperiodic_values[1])
