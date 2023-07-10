@@ -231,3 +231,8 @@ channels_dict = {'S1Tr_RIGHT': [0], 'EMG_RIGHT':[1], 'M2_FrA_RIGHT':[2],
 channel_variables = {'channel_numbers': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
                      'channel_types' : ['eeg', 'emg', 'eeg', 'eeg', 'eeg','eeg', 'eeg','eeg', 'eeg','eeg', 'eeg',
                     'eeg', 'eeg','eeg', 'emg', 'eeg']}
+
+
+
+## human data 
+channels_dict_human = {'EOG': [0], 'E1': [1], 'E2': [2], 'F3': [3], 'C3': [4], 'O1': [5], 'M2': [6]}
