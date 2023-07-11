@@ -2,8 +2,10 @@ import sys
 import os 
 import pandas as pd
 import numpy as np
-import matplotlib
+import matplotlib.pyplot as plt
 import mne
+import scipy 
+
 
 #read human data 
 os.chdir('/home/melissa/PREPROCESSING/SYNGAP1/SYNGAP1_Human_Data')
@@ -41,9 +43,9 @@ def identify_noisy_epochs(split_epochs, num_channels, num_epochs):
     
     intercept_noise = []
     slope_noise = []
-    for chan in channels_ind:
-        for epoch in epochs_ind:
-            freq, power = scipy.signal.welch(test_epochs[epoch][chan], window='hann', fs=256, nperseg=7680)
+    for chan in channels_idx:
+        for epoch in epochs_idx:
+            freq, power = scipy.signal.welch(split_epochs[epoch][chan], window='hann', fs=256, nperseg=7680)
             slope, intercept = np.polyfit(freq, power, 1)
             if intercept < 1e-13:
                 int_noise_dict = {'Intercept': [intercept], 'Epoch_IDX': [epoch], 'Channel': [chan]}
@@ -58,3 +60,25 @@ def identify_noisy_epochs(split_epochs, num_channels, num_epochs):
     slope_noise_concat = pd.concat(slope_noise)
     
     return intercept_noise_concat, slope_noise_concat
+
+
+def remove_duplicate_idx(slope_indices_df, intercept_indices_df):
+    slope_noisy_indices = slope_indices_df['Epoch_IDX'].to_list()
+    intercept_noisy_indices = intercept_indices_df['Epoch_IDX'].to_list()
+    rm_dup = list(set(slope_noisy_indices + intercept_noisy_indices))
+    
+    return rm_dup
+
+
+def plot_individual_indices(test_epoch, channel, num_to_plot):
+    
+    for i in list(np.arange(0, 200)):
+        freq, power = scipy.signal.welch(test_epoch[num_to_plot][channel], window = 'hann', fs = 256, nperseg = 7680)
+        slope, intercept = np.polyfit(freq, power, 1)
+        plt.plot(freq, power)
+        plt.yscale("log")
+        plt.show()
+        plt.clf()
+        
+        
+    
