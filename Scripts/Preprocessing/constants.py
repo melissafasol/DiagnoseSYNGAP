@@ -236,3 +236,15 @@ channel_variables = {'channel_numbers': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1
 
 ## human data 
 channels_dict_human = {'EOG': [0], 'E1': [1], 'E2': [2], 'F3': [3], 'C3': [4], 'O1': [5], 'M2': [6]}
+
+clean_ids = ['P1 N1', 'P10 N1', 'P11 N1', 'P15 N1', 'P16 N1', 'P17 N1', 'P18 N1', 'P20 N1', 'P21 N1', 'P21 N2', 'P22 N1',
+             'P23 N1', 'P24 N1', 'P28 N1', 'P28 N2' 'P29 N2', 'P30 N1']
+
+genotype_human = {'P1': 'WT', 'P2': 'GAP', 'P3': 'GAP', 'P4': 'WT', 
+                  'P5': 'GAP', 'P6': 'GAP', 'P7': 'GAP', 'P8' : 'WT',
+                  'P9': 'GAP', 'P10': 'GAP', 'P11': 'WT', 'P12': 'WT',
+                  'P13': 'GAP', 'P14': 'WT', 'P15': 'GAP', 'P16': 'GAP',
+                  'P17': 'WT', 'P18': 'WT', 'P19': 'WT', 'P20': 'GAP',
+                  'P21': 'WT', 'P22': 'GAP', 'P23': 'GAP', 'P24': 'WT',
+                  'P25': 'WT', 'P26': 'GAP', 'P27': 'WT', 'P28': 'WT',
+                  'P29': 'WT', 'P30': 'GAP'} 
