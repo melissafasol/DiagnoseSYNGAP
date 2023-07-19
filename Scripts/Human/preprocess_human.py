@@ -108,10 +108,9 @@ def harmonic_filter(channels_idx, epochs_idx, split_epochs, noise_indices):
             if epoch in noise_indices:
                 pass
             else:
-                power_calculations = signal.welch(split_epochs[epoch][chan], window = 'hann', fs = 256, nperseg = 7680)
+                power_calculations = scipy.signal.welch(split_epochs[epoch][chan], window = 'hann', fs = 256, nperseg = 7680)
                 harmonic_1, harmonic_2 = thresholding_algo(y = power_calculations[1], lag = 30, threshold = 5, influence = 0)
                 if harmonic_1 or harmonic_2 > 0:
-                    harmonic_indices.append(epoch)
                     harmonic_noise_dict = {'Epoch_IDX': [epoch], 'Channel': [chan]}
                     harmonic_noise_df = pd.DataFrame(data = harmonic_noise_dict)
                     harmonic_noise_df_ls.append(harmonic_noise_df)
@@ -125,6 +124,32 @@ def harmonic_filter(channels_idx, epochs_idx, split_epochs, noise_indices):
         return harmonic_indices
     else:
         return 'no harmonic artefacts'
+    
+
+def harmonic_filter_only(number_epochs, epochs):
+    channels_idx = list(np.arange(0, 7))
+    epochs_idx = list(np.arange(0, number_epochs))
+
+    harmonic_noise_df_ls = []
+
+    for chan in channels_idx:
+        for epoch in epochs_idx:
+            power_calculations = scipy.signal.welch(epochs[epoch][chan], window = 'hann', fs = 256, nperseg = 7680)
+            harmonic_1, harmonic_2 = thresholding_algo(y = power_calculations[1], lag = 30, threshold = 5, influence = 0)
+            if harmonic_1 or harmonic_2 > 0:
+                harmonic_noise_dict = {'Epoch_IDX': [epoch], 'Channel': [chan]}
+                harmonic_noise_df = pd.DataFrame(data = harmonic_noise_dict)
+                harmonic_noise_df_ls.append(harmonic_noise_df)
+            else:
+                pass
+    
+    if len(harmonic_noise_df_ls)>0:
+        harmonic_noise_df_concat = pd.concat(harmonic_noise_df_ls)
+        harmonic_noisy_indices = harmonic_noise_df_concat['Epoch_IDX'].to_list()
+        harmonic_indices = sorted(list(set(harmonic_noisy_indices)))
+        return harmonic_indices
+    else:
+        pass
 
 
 def plot_individual_indices(test_epoch, channel, num_to_plot):
@@ -176,3 +201,17 @@ def plot_psd(power_concat, save_directory, patient):
     axs.set_ylabel("log Power", fontsize = 25)
 
     plt.savefig(save_directory + str(patient) + '_all_channels.jpg')
+    
+
+
+def select_clean_indices(noise_directory, patient_id, total_num_epochs):
+    noise_indices = np.load(noise_directory + patient_id + '_noise.npy')
+    epoch_numbers = np.arange(1, total_num_epochs, 1)
+    clean_indices = []
+    for idx in epoch_numbers:
+        if idx not in noise_indices:
+            clean_indices.append(idx)
+                
+    return clean_indices
+    
+    
