@@ -9,9 +9,12 @@ from sklearn.metrics import accuracy_score, precision_score, roc_auc_score, \
 
 class XGBtrain():
     
-    def __init__(self, x_train, y_train, x_test, y_test):
+    def __init__(self, x_train, y_train, x_test, y_test, hyperparam_text_path):
         self.x_train = x_train
+        self.y_train = y_train
         self.x_test = x_test
+        self.y_test = y_test 
+        self.hyperparam_text_path = hyperparam_text_path
         self.best_params = {
             'verbosity': 0,
             'eval_metric': 'aucpr',
@@ -29,13 +32,14 @@ class XGBtrain():
         
         def _objective(args):
             model = xgb.train(args, xy, int(args['n_estimators']))
-            y_pred = model.predict(x_test)
+            x_test_m = xgb.DMatrix(self.x_test)
+            y_pred = model.predict(x_test_m)
             
-            output = average_precision_score(y_test, y_pred)
+            output = average_precision_score(self.y_test, y_pred)
             
             return output
         
-        xy = xgb.DMatrix(self.x_train, label= self.x_test)
+        xy = xgb.DMatrix(self.x_train, label= self.y_train)
         
         learning_rate = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5]
         n_estimators = [100, 300, 500, 1000]
@@ -64,7 +68,7 @@ class XGBtrain():
                     trials=trials)
 
         print(best)
-        with open('output/best_params.txt', 'w') as f:
+        with open(str(self.hyperparam_text_path) + '/best_params.txt', 'w') as f:
             f.write(str(best))
             self.best_params.update({
             'learning_rate': learning_rate[best['learning_rate']],
