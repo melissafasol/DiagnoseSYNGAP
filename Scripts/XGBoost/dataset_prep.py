@@ -426,20 +426,34 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
     motor_hurst_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Hurst/'
     motor_hfd_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1//Motor/HFD/'
     motor_dispen_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/DispEn/'
-    motor_gamma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Gamma_Power/'
+    motor_delta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Delta_Power/'
     motor_theta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Theta_Power/'
+    motor_sigma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Sigma_Power/'
+    motor_beta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Beta_Power/'
+    motor_gamma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Gamma_Power/'
 
     soma_hurst_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Hurst/'
     soma_hfd_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/HFD/'
     soma_dispen_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/DispEn/'
-    soma_gamma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Gamma_Power/'
+    soma_delta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Delta_Power/'
     soma_theta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Theta_Power/'
+    soma_sigma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Sigma_Power/'
+    soma_beta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Beta_Power/'
+    soma_gamma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Gamma_Power/'
 
     vis_hurst_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Hurst/'
     vis_hfd_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/HFD/'
     vis_dispen_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/DispEn/'
-    vis_gamma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Gamma_Power/'
+    vis_delta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Delta_Power/'
     vis_theta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Theta_Power/'
+    vis_sigma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Sigma_Power/'
+    vis_beta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Beta_Power/'
+    vis_gamma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Gamma_Power/'
+    
+    #fooof
+    motor_fooof_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Motor_FOOOF/'
+    soma_fooof_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Somatosensory_FOOOF/'
+    vis_fooof_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Visual_FOOOF/'
 
     #connectivity indices
     cross_cor_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/CrossCorr/'
@@ -465,8 +479,26 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
         motor_hurst_avg = [value[0] for value in motor_hurst]
 
         motor_dispen = np.load(motor_dispen_dir + animal + '_dispen.npy')
-        motor_gamma = np.load(motor_gamma_dir + animal + '_power.npy') 
+        motor_delta_right = np.load(motor_delta_dir + animal + '_right_power.npy')
+        motor_delta_left = np.load(motor_delta_dir + animal + '_left_power.npy')
+        motor_delta = np.mean(motor_delta_right, motor_delta_left)
         motor_theta = np.load(motor_theta_dir + animal + '_power.npy') 
+        motor_sigma_right = np.load(motor_sigma_dir + animal + '_right_power.npy')
+        motor_sigma_left = np.load(motor_sigma_dir + animal + '_left_power.npy')
+        motor_sigma = np.mean(motor_sigma_right, motor_sigma_left)
+        motor_beta_right = np.load(motor_beta_dir + animal + '_right_power.npy')
+        motor_beta_left = np.load(motor_beta_dir + animal + '_left_power.npy')
+        motor_beta = np.mean(motor_beta_right, motor_beta_left)
+        motor_gamma = np.load(motor_gamma_dir + animal + '_power.npy') 
+        
+        #motor fooof
+        motor_offset_right = np.load(motor_fooof_dir + animal + '_motor_offset_right.npy')
+        motor_offset_left = np.load(motor_fooof_dir + animal + '_motor_offset_left.npy')
+        motor_exponent_right = np.load(motor_fooof_dir + animal + '_motor_exponent_right.npy')
+        motor_exponent_left = np.load(motor_fooof_dir + animal + '_motor_exponent_left.npy')
+        motor_offset = np.mean([motor_offset_left, motor_offset_right])
+        motor_exponent = np.mean([motor_exponent_left, motor_exponent_right])
+        
 
         #somatosensory 
         soma_hfd = np.load(soma_hfd_dir + animal + '_hfd_concat.npy')
@@ -475,18 +507,53 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
         soma_hurst_avg = [value[0] for value in soma_hurst]
 
         soma_dispen = np.load(soma_dispen_dir + animal + '_dispen.npy')
-        soma_gamma = np.load(soma_gamma_dir + animal + '_power.npy') 
+        soma_delta_right = np.load(soma_delta_dir + animal + '_right_power.npy')
+        soma_delta_left = np.load(soma_delta_dir + animal + '_left_power.npy')
+        soma_delta = np.mean(soma_delta_left, soma_delta_right)
         soma_theta = np.load(soma_theta_dir + animal + '_power.npy') 
+        soma_sigma_right = np.load(soma_sigma_dir + animal + '_right_power.npy')
+        soma_sigma_left = np.load(soma_sigma_dir + animal + '_left_power.npy')
+        soma_sigma = np.mean(soma_sigma_left, soma_sigma_right)
+        soma_beta_right = np.load(soma_beta_dir + animal + '_right_power.npy')
+        soma_beta_left = np.load(soma_beta_dir + animal + '_left_power.npy')
+        soma_beta = np.mean(soma_beta_left, soma_beta_right)
+        soma_gamma = np.load(soma_gamma_dir + animal + '_power.npy') 
+        
+        #somatosensory fooof
+        soma_offset_right = np.load(soma_fooof_dir + animal + '_somato_offset_right.npy')
+        soma_offset_left = np.load(soma_fooof_dir + animal + '_somato_offset_left.npy')
+        soma_exponent_right = np.load(soma_fooof_dir + animal + '_somato_exponent_right.npy')
+        soma_exponent_left = np.load(soma_fooof_dir + animal + '_somato_exponent_left.npy')
+        soma_offset = np.mean([soma_offset_left, soma_offset_right])
+        soma_exponent = np.mean([soma_exponent_left, soma_exponent_right])
 
-        #somatosensory 
+        #vis 
         vis_hfd = np.load(vis_hfd_dir + animal + '_hfd_concat.npy')
         vis_hfd_avg = [value[0] for value in vis_hfd]
         vis_hurst = np.load(vis_hurst_dir + animal + '_hurst_concat.npy')
         vis_hurst_avg = [value[0] for value in vis_hurst]
 
         vis_dispen = np.load(vis_dispen_dir + animal + '_dispen.npy')
-        vis_gamma = np.load(vis_gamma_dir + animal + '_power.npy') 
+        vis_delta_right = np.load(vis_delta_dir + animal + '_right_power.npy')
+        vis_delta_left = np.load(vis_delta_dir + animal + '_left_power.npy')
+        vis_delta = np.mean(vis_delta_left, vis_delta_right)
         vis_theta = np.load(vis_theta_dir + animal + '_power.npy') 
+        vis_sigma_right = np.load(vis_sigma_dir + animal + '_right_power.npy')
+        vis_sigma_left = np.load(vis_sigma_dir + animal + '_left_power.npy')
+        vis_sigma = np.mean(vis_sigma_left, vis_sigma_right)
+        vis_beta_right = np.load(vis_beta_dir + animal + '_right_power.npy')
+        vis_beta_left = np.load(vis_beta_dir + animal + '_left_power.npy')
+        vis_beta = np.mean(vis_beta_left, vis_beta_right)
+        vis_gamma = np.load(vis_gamma_dir + animal + '_power.npy') 
+        
+        #vis fooof
+        vis_offset_right = np.load(vis_fooof_dir + animal + '_vis_offset_right.npy')
+        vis_offset_left = np.load(vis_fooof_dir + animal + '_vis_offset_left.npy')
+        vis_exponent_right = np.load(vis_fooof_dir + animal + '_vis_exponent_right.npy')
+        vis_exponent_left = np.load(vis_fooof_dir + animal + '_vis_exponent_left.npy')
+        vis_offset = np.mean([vis_offset_left, vis_offset_right])
+        vis_exponent = np.mean([vis_exponent_left, vis_exponent_right])
+        
 
         #cross cor
         mot_cross_corr_left = np.load(mot_cross_cor_dir + str(animal) + '_mot_left_cross_cor.npy')
@@ -513,24 +580,39 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
             motor_hfd_avg = np.delete(motor_hfd_avg, error_1)
             motor_hurst_avg = np.delete(motor_hurst_avg, error_1)
             motor_dispen = np.delete(motor_dispen, error_1)
-            motor_gamma = np.delete(motor_gamma, error_1)
+            motor_delta = np.delete(motor_delta, error_1)
             motor_theta = np.delete(motor_theta, error_1)
+            motor_sigma = np.delete(motor_sigma, error_1)
+            motor_beta = np.delete(motor_beta, error_1)
+            motor_gamma = np.delete(motor_gamma, error_1)
             soma_hfd_avg = np.delete(soma_hfd_avg, error_1)
             soma_hurst_avg = np.delete(soma_hurst_avg, error_1)
             soma_dispen = np.delete(soma_dispen, error_1)
-            soma_gamma = np.delete(soma_gamma, error_1)
+            soma_delta = np.delete(soma_delta, error_1)
             soma_theta = np.delete(soma_theta, error_1)
+            soma_sigma = np.delete(soma_sigma, error_1)
+            soma_beta = np.delete(soma_beta, error_1) 
+            soma_gamma = np.delete(soma_gamma, error_1)
             vis_hfd_avg = np.delete(vis_hfd_avg, error_1)
             vis_hurst_avg = np.delete(vis_hurst_avg, error_1)
             vis_dispen = np.delete(vis_dispen, error_1)
-            vis_gamma = np.delete(vis_gamma, error_1)
+            vis_delta = np.delete(vis_delta, error_1)
             vis_theta = np.delete(vis_theta, error_1)
+            vis_sigma = np.delete(vis_sigma, error_1)
+            vis_beta = np.delete(vis_beta, error_1)
+            vis_gamma = np.delete(vis_gamma, error_1)
             mot_phase_lock_left = np.delete(mot_phase_lock_left, error_1)
             mot_phase_lock_right = np.delete(mot_phase_lock_right, error_1)
             som_phase_lock_left = np.delete(som_phase_lock_left, error_1)
             som_phase_lock_right = np.delete(som_phase_lock_right, error_1)
             vis_phase_lock_left = np.delete(vis_phase_lock_left, error_1)
             vis_phase_lock_right = np.delete(vis_phase_lock_right, error_1)
+            motor_offset = np.delete(motor_offset, error_1)
+            motor_exponent = np.delete(motor_exponent, error_1)
+            soma_offset = np.delete(soma_offset, error_1)
+            soma_exponent = np.delete(soma_exponent, error_1)
+            vis_offset = np.delete(vis_offset, error_1)
+            vis_exponent = np.delete(vis_exponent, error_1)
         else:
             pass
         
@@ -567,17 +649,36 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
         region_dict = {'Genotype': [genotype]*len(motor_dispen), 
                        'Animal_ID': [animal]*len(motor_dispen),
                        'SleepStage': br_state,
-                       'Motor_DispEn': motor_dispen, 'Motor_Hurst': motor_hurst_avg, 
+                       'Motor_DispEn': motor_dispen, 
+                       'Motor_Hurst': motor_hurst_avg, 
                        'Motor_HFD': motor_hfd_avg,
-                       'Motor_Gamma': motor_gamma, 'Motor_Theta': motor_theta,
-                       'Soma_DispEn': soma_dispen,'Soma_Hurst': soma_hurst_avg,
+                       'Motor_Delta': motor_delta,
+                       'Motor_Theta': motor_theta,
+                       'Motor_Sigma': motor_sigma,
+                       'Motor_Beta': motor_beta,
+                       'Motor_Gamma': motor_gamma,
+                       'Soma_DispEn': soma_dispen,
+                       'Soma_Hurst': soma_hurst_avg,
                        'Soma_HFD': soma_hfd_avg,
-                       'Soma_Gamma': soma_gamma,'Soma_Theta': soma_theta,
+                       'Soma_Delta': soma_delta,
+                       'Soma_Theta': soma_theta,
+                       'Soma_Sigma': soma_sigma,
+                       'Soma_Beta': soma_beta,
+                       'Soma_Gamma': soma_gamma,
                        'Visual_DispEn': vis_dispen,
                        'Visual_Hurst': vis_hurst_avg,
                        'Visual_HFD': vis_hfd_avg, 
-                       'Vis_Gamma': vis_gamma, 
+                       'Vis_Delta': vis_delta,
                        'Vis_Theta': vis_theta,
+                       'Vis_Sigma': vis_sigma,
+                       'Vis_Beta': vis_beta,
+                       'Vis_Gamma': vis_gamma, 
+                       'Motor_Offset': motor_offset,
+                       'Motor_Exponent': motor_exponent,
+                       'Soma_Offset': soma_offset,
+                       'Soma_Exponent': soma_exponent,
+                       'Vis_Offset': vis_offset,
+                       'Vis_Exponent': vis_exponent,
                        'Mot_CC_Right': mot_cross_corr_right, 'Mot_CC_Left': mot_cross_corr_left,
                        'Som_CC_Right': som_cross_corr_right, 'Som_CC_Left': som_cross_corr_left,
                        'Vis_CC_Right': vis_cross_corr_right, 'Mot_CC_Left': vis_cross_corr_left,
@@ -599,20 +700,34 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
     motor_hurst_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Hurst/'
     motor_hfd_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1//Motor/HFD/'
     motor_dispen_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/DispEn/'
-    motor_gamma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Gamma_Power/'
+    motor_delta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Delta_Power/'
     motor_theta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Theta_Power/'
+    motor_sigma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Sigma_Power/'
+    motor_beta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Beta_Power/'
+    motor_gamma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Gamma_Power/'
 
     soma_hurst_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Hurst/'
     soma_hfd_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/HFD/'
     soma_dispen_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/DispEn/'
-    soma_gamma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Gamma_Power/'
+    soma_delta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Delta_Power/'
     soma_theta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Theta_Power/'
+    soma_sigma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Sigma_Power/'
+    soma_beta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Beta_Power/'
+    soma_gamma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Gamma_Power/'
 
     vis_hurst_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Hurst/'
     vis_hfd_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/HFD/'
     vis_dispen_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/DispEn/'
-    vis_gamma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Gamma_Power/'
+    vis_delta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Delta_Power/'
     vis_theta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Theta_Power/'
+    vis_sigma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Sigma_Power/'
+    vis_beta_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Beta_Power/'
+    vis_gamma_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Gamma_Power/'
+    
+    #fooof
+    motor_fooof_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Motor_FOOOF/'
+    soma_fooof_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Somatosensory_FOOOF/'
+    vis_fooof_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Visual_FOOOF/'
 
     #connectivity indices
     cross_cor_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/CrossCorr/'
@@ -634,36 +749,89 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         br_state_2 = br_2['brainstate'].to_numpy()
         br_state = np.concatenate([br_state_1, br_state_2])
 
-        #motor 
+         #motor 
         motor_hfd = np.load(motor_hfd_dir + animal + '_hfd_concat.npy')
         motor_hfd_avg = [value[0] for value in motor_hfd]
         motor_hurst = np.load(motor_hurst_dir + animal + '_hurst_concat.npy')
         motor_hurst_avg = [value[0] for value in motor_hurst]
 
         motor_dispen = np.load(motor_dispen_dir + animal + '_dispen.npy')
-        motor_gamma = np.load(motor_gamma_dir + animal + '_power.npy') 
+        motor_delta_right = np.load(motor_delta_dir + animal + '_right_power.npy')
+        motor_delta_left = np.load(motor_delta_dir + animal + '_left_power.npy')
+        motor_delta = np.mean(motor_delta_right, motor_delta_left)
         motor_theta = np.load(motor_theta_dir + animal + '_power.npy') 
+        motor_sigma_right = np.load(motor_sigma_dir + animal + '_right_power.npy')
+        motor_sigma_left = np.load(motor_sigma_dir + animal + '_left_power.npy')
+        motor_sigma = np.mean(motor_sigma_right, motor_sigma_left)
+        motor_beta_right = np.load(motor_beta_dir + animal + '_right_power.npy')
+        motor_beta_left = np.load(motor_beta_dir + animal + '_left_power.npy')
+        motor_beta = np.mean(motor_beta_right, motor_beta_left)
+        motor_gamma = np.load(motor_gamma_dir + animal + '_power.npy') 
+        
+        #motor fooof
+        motor_offset_right = np.load(motor_fooof_dir + animal + '_motor_offset_right.npy')
+        motor_offset_left = np.load(motor_fooof_dir + animal + '_motor_offset_left.npy')
+        motor_exponent_right = np.load(motor_fooof_dir + animal + '_motor_exponent_right.npy')
+        motor_exponent_left = np.load(motor_fooof_dir + animal + '_motor_exponent_left.npy')
+        motor_offset = np.mean([motor_offset_left, motor_offset_right])
+        motor_exponent = np.mean([motor_exponent_left, motor_exponent_right])
+        
 
         #somatosensory 
         soma_hfd = np.load(soma_hfd_dir + animal + '_hfd_concat.npy')
         soma_hfd_avg = [value[0] for value in soma_hfd]
         soma_hurst = np.load(soma_hurst_dir + animal + '_hurst_concat.npy')
         soma_hurst_avg = [value[0] for value in soma_hurst]
-    
+
         soma_dispen = np.load(soma_dispen_dir + animal + '_dispen.npy')
-        soma_gamma = np.load(soma_gamma_dir + animal + '_power.npy') 
+        soma_delta_right = np.load(soma_delta_dir + animal + '_right_power.npy')
+        soma_delta_left = np.load(soma_delta_dir + animal + '_left_power.npy')
+        soma_delta = np.mean(soma_delta_left, soma_delta_right)
         soma_theta = np.load(soma_theta_dir + animal + '_power.npy') 
-    
-        #somatosensory 
+        soma_sigma_right = np.load(soma_sigma_dir + animal + '_right_power.npy')
+        soma_sigma_left = np.load(soma_sigma_dir + animal + '_left_power.npy')
+        soma_sigma = np.mean(soma_sigma_left, soma_sigma_right)
+        soma_beta_right = np.load(soma_beta_dir + animal + '_right_power.npy')
+        soma_beta_left = np.load(soma_beta_dir + animal + '_left_power.npy')
+        soma_beta = np.mean(soma_beta_left, soma_beta_right)
+        soma_gamma = np.load(soma_gamma_dir + animal + '_power.npy') 
+        
+        #somatosensory fooof
+        soma_offset_right = np.load(soma_fooof_dir + animal + '_somato_offset_right.npy')
+        soma_offset_left = np.load(soma_fooof_dir + animal + '_somato_offset_left.npy')
+        soma_exponent_right = np.load(soma_fooof_dir + animal + '_somato_exponent_right.npy')
+        soma_exponent_left = np.load(soma_fooof_dir + animal + '_somato_exponent_left.npy')
+        soma_offset = np.mean([soma_offset_left, soma_offset_right])
+        soma_exponent = np.mean([soma_exponent_left, soma_exponent_right])
+
+        #vis 
         vis_hfd = np.load(vis_hfd_dir + animal + '_hfd_concat.npy')
         vis_hfd_avg = [value[0] for value in vis_hfd]
         vis_hurst = np.load(vis_hurst_dir + animal + '_hurst_concat.npy')
         vis_hurst_avg = [value[0] for value in vis_hurst]
-    
+
         vis_dispen = np.load(vis_dispen_dir + animal + '_dispen.npy')
+        vis_delta_right = np.load(vis_delta_dir + animal + '_right_power.npy')
+        vis_delta_left = np.load(vis_delta_dir + animal + '_left_power.npy')
+        vis_delta = np.mean(vis_delta_left, vis_delta_right)
+        vis_theta = np.load(vis_theta_dir + animal + '_power.npy') 
+        vis_sigma_right = np.load(vis_sigma_dir + animal + '_right_power.npy')
+        vis_sigma_left = np.load(vis_sigma_dir + animal + '_left_power.npy')
+        vis_sigma = np.mean(vis_sigma_left, vis_sigma_right)
+        vis_beta_right = np.load(vis_beta_dir + animal + '_right_power.npy')
+        vis_beta_left = np.load(vis_beta_dir + animal + '_left_power.npy')
+        vis_beta = np.mean(vis_beta_left, vis_beta_right)
         vis_gamma = np.load(vis_gamma_dir + animal + '_power.npy') 
-        vis_theta = np.load(vis_theta_dir + animal + '_power.npy')
-    
+        
+        #vis fooof
+        vis_offset_right = np.load(vis_fooof_dir + animal + '_vis_offset_right.npy')
+        vis_offset_left = np.load(vis_fooof_dir + animal + '_vis_offset_left.npy')
+        vis_exponent_right = np.load(vis_fooof_dir + animal + '_vis_exponent_right.npy')
+        vis_exponent_left = np.load(vis_fooof_dir + animal + '_vis_exponent_left.npy')
+        vis_offset = np.mean([vis_offset_left, vis_offset_right])
+        vis_exponent = np.mean([vis_exponent_left, vis_exponent_right])
+        
+
         #cross cor
         mot_cross_corr_left = np.load(mot_cross_cor_dir + str(animal) + '_mot_left_cross_cor.npy')
         mot_cross_corr_right = np.load(mot_cross_cor_dir + str(animal) + '_mot_right_cross_cor.npy')
@@ -671,7 +839,7 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         som_cross_corr_right = np.load(som_cross_cor_dir + str(animal) + '_som_right_cross_cor.npy')
         vis_cross_corr_left = np.load(vis_cross_cor_dir + str(animal) + '_vis_left_cross_cor.npy')
         vis_cross_corr_right = np.load(vis_cross_cor_dir + str(animal) + '_vis_right_cross_cor.npy')
-    
+
         #phase lock 
         mot_phase_lock_left = np.load(mot_phase_lock_dir + str(animal) + '_mot_left_phase_lock.npy')
         mot_phase_lock_right = np.load(mot_phase_lock_dir + str(animal) + '_mot_right_phase_lock.npy')
@@ -679,11 +847,12 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         som_phase_lock_right = np.load(som_phase_lock_dir + str(animal) + '_som_right_phase_lock.npy')
         vis_phase_lock_left = np.load(vis_phase_lock_dir + str(animal) + '_vis_left_phase_lock.npy')
         vis_phase_lock_right = np.load(vis_phase_lock_dir + str(animal) + '_vis_right_phase_lock.npy')
-        
+
         #cross_corr_errors
         error_1 = np.load(cross_cor_dir + animal + '_error_br_1.npy')
         error_2 = np.load(cross_cor_dir + animal + '_error_br_2.npy')
         
+       
         
         if len(error_1) > 0 and len(error_2) >0:
             print(animal + ' error')
@@ -693,48 +862,79 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
             motor_hfd_avg = np.delete(motor_hfd_avg, errors)
             motor_hurst_avg = np.delete(motor_hurst_avg, errors)
             motor_dispen = np.delete(motor_dispen, errors)
-            motor_gamma = np.delete(motor_gamma, errors)
+            motor_delta = np.delete(motor_delta, errors)
             motor_theta = np.delete(motor_theta, errors)
+            motor_sigma = np.delete(motor_sigma, errors)
+            motor_beta = np.delete(motor_beta, errors)
+            motor_gamma = np.delete(motor_gamma, errors)
             soma_hfd_avg = np.delete(soma_hfd_avg, errors)
             soma_hurst_avg = np.delete(soma_hurst_avg, errors)
             soma_dispen = np.delete(soma_dispen, errors)
-            soma_gamma = np.delete(soma_gamma, errors)
+            soma_delta = np.delete(soma_delta, errors)
             soma_theta = np.delete(soma_theta, errors)
+            soma_sigma = np.delete(soma_sigma, errors)
+            soma_beta = np.delete(soma_beta, errors) 
+            soma_gamma = np.delete(soma_gamma, errors)
             vis_hfd_avg = np.delete(vis_hfd_avg, errors)
             vis_hurst_avg = np.delete(vis_hurst_avg, errors)
             vis_dispen = np.delete(vis_dispen, errors)
-            vis_gamma = np.delete(vis_gamma, errors)
+            vis_delta = np.delete(vis_delta, errors)
             vis_theta = np.delete(vis_theta, errors)
+            vis_sigma = np.delete(vis_sigma, errors)
+            vis_beta = np.delete(vis_beta, errors)
+            vis_gamma = np.delete(vis_gamma, errors)
             mot_phase_lock_left = np.delete(mot_phase_lock_left, errors)
             mot_phase_lock_right = np.delete(mot_phase_lock_right, errors)
             som_phase_lock_left = np.delete(som_phase_lock_left, errors)
             som_phase_lock_right = np.delete(som_phase_lock_right, errors)
             vis_phase_lock_left = np.delete(vis_phase_lock_left, errors)
             vis_phase_lock_right = np.delete(vis_phase_lock_right, errors)
+            motor_offset = np.delete(motor_offset, errors)
+            motor_exponent = np.delete(motor_exponent, errors)
+            soma_offset = np.delete(soma_offset, errors)
+            soma_exponent = np.delete(soma_exponent, errors)
+            vis_offset = np.delete(vis_offset, errors)
+            vis_exponent = np.delete(vis_exponent, errors)
             
         elif len(error_1) > 0:
             br_state = np.delete(br_state, error_1)
             motor_hfd_avg = np.delete(motor_hfd_avg, error_1)
             motor_hurst_avg = np.delete(motor_hurst_avg, error_1)
             motor_dispen = np.delete(motor_dispen, error_1)
-            motor_gamma = np.delete(motor_gamma, error_1)
+            motor_delta = np.delete(motor_delta, error_1)
             motor_theta = np.delete(motor_theta, error_1)
+            motor_sigma = np.delete(motor_sigma, error_1)
+            motor_beta = np.delete(motor_beta, error_1)
+            motor_gamma = np.delete(motor_gamma, error_1)
             soma_hfd_avg = np.delete(soma_hfd_avg, error_1)
             soma_hurst_avg = np.delete(soma_hurst_avg, error_1)
             soma_dispen = np.delete(soma_dispen, error_1)
-            soma_gamma = np.delete(soma_gamma, error_1)
+            soma_delta = np.delete(soma_delta, error_1)
             soma_theta = np.delete(soma_theta, error_1)
+            soma_sigma = np.delete(soma_sigma, error_1)
+            soma_beta = np.delete(soma_beta, error_1) 
+            soma_gamma = np.delete(soma_gamma, error_1)
             vis_hfd_avg = np.delete(vis_hfd_avg, error_1)
             vis_hurst_avg = np.delete(vis_hurst_avg, error_1)
             vis_dispen = np.delete(vis_dispen, error_1)
-            vis_gamma = np.delete(vis_gamma, error_1)
+            vis_delta = np.delete(vis_delta, error_1)
             vis_theta = np.delete(vis_theta, error_1)
+            vis_sigma = np.delete(vis_sigma, error_1)
+            vis_beta = np.delete(vis_beta, error_1)
+            vis_gamma = np.delete(vis_gamma, error_1)
             mot_phase_lock_left = np.delete(mot_phase_lock_left, error_1)
             mot_phase_lock_right = np.delete(mot_phase_lock_right, error_1)
             som_phase_lock_left = np.delete(som_phase_lock_left, error_1)
             som_phase_lock_right = np.delete(som_phase_lock_right, error_1)
             vis_phase_lock_left = np.delete(vis_phase_lock_left, error_1)
             vis_phase_lock_right = np.delete(vis_phase_lock_right, error_1)
+            motor_offset = np.delete(motor_offset, error_1)
+            motor_exponent = np.delete(motor_exponent, error_1)
+            soma_offset = np.delete(soma_offset, error_1)
+            soma_exponent = np.delete(soma_exponent, error_1)
+            vis_offset = np.delete(vis_offset, error_1)
+            vis_exponent = np.delete(vis_exponent, error_1)
+            
         elif len(error_2) > 0:
             print(animal + ' error 2')
             error_2_br_2 = error_2 + 17280
@@ -742,24 +942,39 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
             motor_hfd_avg = np.delete(motor_hfd_avg, error_2_br_2)
             motor_hurst_avg = np.delete(motor_hurst_avg, error_2_br_2)
             motor_dispen = np.delete(motor_dispen, error_2_br_2)
-            motor_gamma = np.delete(motor_gamma, error_2_br_2)
+            motor_delta = np.delete(motor_delta, error_2_br_2)
             motor_theta = np.delete(motor_theta, error_2_br_2)
+            motor_sigma = np.delete(motor_sigma, error_2_br_2)
+            motor_beta = np.delete(motor_beta, error_2_br_2)
+            motor_gamma = np.delete(motor_gamma, error_2_br_2)
             soma_hfd_avg = np.delete(soma_hfd_avg, error_2_br_2)
             soma_hurst_avg = np.delete(soma_hurst_avg, error_2_br_2)
             soma_dispen = np.delete(soma_dispen, error_2_br_2)
-            soma_gamma = np.delete(soma_gamma, error_2_br_2)
+            soma_delta = np.delete(soma_delta, error_2_br_2)
             soma_theta = np.delete(soma_theta, error_2_br_2)
+            soma_sigma = np.delete(soma_sigma, error_2_br_2)
+            soma_beta = np.delete(soma_beta, error_2_br_2) 
+            soma_gamma = np.delete(soma_gamma, error_2_br_2)
             vis_hfd_avg = np.delete(vis_hfd_avg, error_2_br_2)
             vis_hurst_avg = np.delete(vis_hurst_avg, error_2_br_2)
             vis_dispen = np.delete(vis_dispen, error_2_br_2)
-            vis_gamma = np.delete(vis_gamma, error_2_br_2)
+            vis_delta = np.delete(vis_delta, error_2_br_2)
             vis_theta = np.delete(vis_theta, error_2_br_2)
+            vis_sigma = np.delete(vis_sigma, error_2_br_2)
+            vis_beta = np.delete(vis_beta, error_2_br_2)
+            vis_gamma = np.delete(vis_gamma, error_2_br_2)
             mot_phase_lock_left = np.delete(mot_phase_lock_left, error_2_br_2)
             mot_phase_lock_right = np.delete(mot_phase_lock_right, error_2_br_2)
             som_phase_lock_left = np.delete(som_phase_lock_left, error_2_br_2)
             som_phase_lock_right = np.delete(som_phase_lock_right, error_2_br_2)
             vis_phase_lock_left = np.delete(vis_phase_lock_left, error_2_br_2)
             vis_phase_lock_right = np.delete(vis_phase_lock_right, error_2_br_2)
+            motor_offset = np.delete(motor_offset, error_2_br_2)
+            motor_exponent = np.delete(motor_exponent, error_2_br_2)
+            soma_offset = np.delete(soma_offset, error_2_br_2)
+            soma_exponent = np.delete(soma_exponent, error_2_br_2)
+            vis_offset = np.delete(vis_offset, error_2_br_2)
+            vis_exponent = np.delete(vis_exponent, error_2_br_2)
         else:
             pass
         
@@ -786,17 +1001,36 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         region_dict = {'Genotype': [genotype]*len(motor_gamma), 
                        'Animal_ID': [animal]*len(motor_gamma),
                        'SleepStage': br_state,
-                       'Motor_DispEn': motor_dispen, 'Motor_Hurst': motor_hurst_avg, 
+                       'Motor_DispEn': motor_dispen,
+                       'Motor_Hurst': motor_hurst_avg, 
                        'Motor_HFD': motor_hfd_avg,
-                       'Motor_Gamma': motor_gamma,
+                       'Motor_Delta': motor_delta,
                        'Motor_Theta': motor_theta,
-                       'Soma_DispEn': soma_dispen,'Soma_Hurst': soma_hurst_avg,
+                       'Motor_Sigma': motor_sigma,
+                       'Motor_Beta': motor_beta,
+                       'Motor_Gamma': motor_gamma,
+                       'Soma_DispEn': soma_dispen,
+                       'Soma_Hurst': soma_hurst_avg,
                        'Soma_HFD': soma_hfd_avg,
-                       'Soma_Gamma': soma_gamma,'Soma_Theta': soma_theta,
+                       'Soma_Delta': soma_delta,
+                       'Soma_Theta': soma_theta,
+                       'Soma_Sigma': soma_sigma,
+                       'Soma_Beta': soma_beta,
+                       'Soma_Gamma': soma_gamma,
                        'Visual_DispEn': vis_dispen,
-                       'Visual_Hurst': vis_hurst_avg,'Visual_HFD': vis_hfd_avg,
-                       'Vis_Gamma': vis_gamma, 
+                       'Visual_Hurst': vis_hurst_avg,
+                       'Visual_HFD': vis_hfd_avg,
+                       'Vis_Delta': vis_delta,
                        'Vis_Theta': vis_theta,
+                       'Vis_Sigma': vis_sigma,
+                       'Vis_Beta': vis_beta,
+                       'Vis_Gamma': vis_gamma, 
+                       'Motor_Offset': motor_offset,
+                       'Motor_Exponent': motor_exponent,
+                       'Soma_Offset': soma_offset,
+                       'Soma_Exponent': soma_exponent,
+                       'Vis_Offset': vis_offset,
+                       'Vis_Exponent': vis_exponent,
                        'Mot_CC_Right': mot_cross_corr_right, 'Mot_CC_Left': mot_cross_corr_left,
                        'Som_CC_Right': som_cross_corr_right, 'Som_CC_Left': som_cross_corr_left,
                        'Vis_CC_Right': vis_cross_corr_right, 'Mot_CC_Left': vis_cross_corr_left,
