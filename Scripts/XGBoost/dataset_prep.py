@@ -479,16 +479,10 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
         motor_hurst_avg = [value[0] for value in motor_hurst]
 
         motor_dispen = np.load(motor_dispen_dir + animal + '_dispen.npy')
-        motor_delta_right = np.load(motor_delta_dir + animal + '_right_power.npy')
-        motor_delta_left = np.load(motor_delta_dir + animal + '_left_power.npy')
-        motor_delta = np.mean(motor_delta_right, motor_delta_left)
+        motor_delta = np.load(motor_delta_dir + animal + '_power.npy')
         motor_theta = np.load(motor_theta_dir + animal + '_power.npy') 
-        motor_sigma_right = np.load(motor_sigma_dir + animal + '_right_power.npy')
-        motor_sigma_left = np.load(motor_sigma_dir + animal + '_left_power.npy')
-        motor_sigma = np.mean(motor_sigma_right, motor_sigma_left)
-        motor_beta_right = np.load(motor_beta_dir + animal + '_right_power.npy')
-        motor_beta_left = np.load(motor_beta_dir + animal + '_left_power.npy')
-        motor_beta = np.mean(motor_beta_right, motor_beta_left)
+        motor_sigma = np.load(motor_sigma_dir + animal + '_power.npy')
+        motor_beta = np.load(motor_beta_dir + animal + '_power.npy')
         motor_gamma = np.load(motor_gamma_dir + animal + '_power.npy') 
         
         #motor fooof
@@ -507,16 +501,10 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
         soma_hurst_avg = [value[0] for value in soma_hurst]
 
         soma_dispen = np.load(soma_dispen_dir + animal + '_dispen.npy')
-        soma_delta_right = np.load(soma_delta_dir + animal + '_right_power.npy')
-        soma_delta_left = np.load(soma_delta_dir + animal + '_left_power.npy')
-        soma_delta = np.mean(soma_delta_left, soma_delta_right)
+        soma_delta = np.load(soma_delta_dir + animal + '_power.npy') 
         soma_theta = np.load(soma_theta_dir + animal + '_power.npy') 
-        soma_sigma_right = np.load(soma_sigma_dir + animal + '_right_power.npy')
-        soma_sigma_left = np.load(soma_sigma_dir + animal + '_left_power.npy')
-        soma_sigma = np.mean(soma_sigma_left, soma_sigma_right)
-        soma_beta_right = np.load(soma_beta_dir + animal + '_right_power.npy')
-        soma_beta_left = np.load(soma_beta_dir + animal + '_left_power.npy')
-        soma_beta = np.mean(soma_beta_left, soma_beta_right)
+        soma_sigma = np.load(soma_sigma_dir + animal + '_power.npy') 
+        soma_beta = np.load(soma_beta_dir + animal + '_power.npy')
         soma_gamma = np.load(soma_gamma_dir + animal + '_power.npy') 
         
         #somatosensory fooof
@@ -534,16 +522,10 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
         vis_hurst_avg = [value[0] for value in vis_hurst]
 
         vis_dispen = np.load(vis_dispen_dir + animal + '_dispen.npy')
-        vis_delta_right = np.load(vis_delta_dir + animal + '_right_power.npy')
-        vis_delta_left = np.load(vis_delta_dir + animal + '_left_power.npy')
-        vis_delta = np.mean(vis_delta_left, vis_delta_right)
+        vis_delta = np.load(vis_delta_dir + animal + '_power.npy')
         vis_theta = np.load(vis_theta_dir + animal + '_power.npy') 
-        vis_sigma_right = np.load(vis_sigma_dir + animal + '_right_power.npy')
-        vis_sigma_left = np.load(vis_sigma_dir + animal + '_left_power.npy')
-        vis_sigma = np.mean(vis_sigma_left, vis_sigma_right)
-        vis_beta_right = np.load(vis_beta_dir + animal + '_right_power.npy')
-        vis_beta_left = np.load(vis_beta_dir + animal + '_left_power.npy')
-        vis_beta = np.mean(vis_beta_left, vis_beta_right)
+        vis_sigma = np.mean(vis_sigma_dir + animal + '_power.npy')
+        vis_beta = np.load(vis_gamma_dir + animal + '_power.npy')
         vis_gamma = np.load(vis_gamma_dir + animal + '_power.npy') 
         
         #vis fooof
@@ -756,16 +738,10 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         motor_hurst_avg = [value[0] for value in motor_hurst]
 
         motor_dispen = np.load(motor_dispen_dir + animal + '_dispen.npy')
-        motor_delta_right = np.load(motor_delta_dir + animal + '_right_power.npy')
-        motor_delta_left = np.load(motor_delta_dir + animal + '_left_power.npy')
-        motor_delta = np.mean(motor_delta_right, motor_delta_left)
+        motor_delta = np.load(motor_delta_dir + animal + '_power.npy') 
         motor_theta = np.load(motor_theta_dir + animal + '_power.npy') 
-        motor_sigma_right = np.load(motor_sigma_dir + animal + '_right_power.npy')
-        motor_sigma_left = np.load(motor_sigma_dir + animal + '_left_power.npy')
-        motor_sigma = np.mean(motor_sigma_right, motor_sigma_left)
-        motor_beta_right = np.load(motor_beta_dir + animal + '_right_power.npy')
-        motor_beta_left = np.load(motor_beta_dir + animal + '_left_power.npy')
-        motor_beta = np.mean(motor_beta_right, motor_beta_left)
+        motor_sigma = np.load(motor_sigma_dir + animal + '_power.npy') 
+        motor_beta = np.load(motor_beta_dir + animal + '_power.npy') 
         motor_gamma = np.load(motor_gamma_dir + animal + '_power.npy') 
         
         #motor fooof
@@ -776,7 +752,6 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         motor_offset = np.mean([motor_offset_left, motor_offset_right])
         motor_exponent = np.mean([motor_exponent_left, motor_exponent_right])
         
-
         #somatosensory 
         soma_hfd = np.load(soma_hfd_dir + animal + '_hfd_concat.npy')
         soma_hfd_avg = [value[0] for value in soma_hfd]
@@ -784,16 +759,10 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         soma_hurst_avg = [value[0] for value in soma_hurst]
 
         soma_dispen = np.load(soma_dispen_dir + animal + '_dispen.npy')
-        soma_delta_right = np.load(soma_delta_dir + animal + '_right_power.npy')
-        soma_delta_left = np.load(soma_delta_dir + animal + '_left_power.npy')
-        soma_delta = np.mean(soma_delta_left, soma_delta_right)
+        soma_delta = np.load(soma_delta_dir + animal + '_power.npy') 
         soma_theta = np.load(soma_theta_dir + animal + '_power.npy') 
-        soma_sigma_right = np.load(soma_sigma_dir + animal + '_right_power.npy')
-        soma_sigma_left = np.load(soma_sigma_dir + animal + '_left_power.npy')
-        soma_sigma = np.mean(soma_sigma_left, soma_sigma_right)
-        soma_beta_right = np.load(soma_beta_dir + animal + '_right_power.npy')
-        soma_beta_left = np.load(soma_beta_dir + animal + '_left_power.npy')
-        soma_beta = np.mean(soma_beta_left, soma_beta_right)
+        soma_sigma = np.load(soma_sigma_dir + animal + '_power.npy') 
+        soma_beta = np.load(soma_beta_dir + animal + '_power.npy') 
         soma_gamma = np.load(soma_gamma_dir + animal + '_power.npy') 
         
         #somatosensory fooof
@@ -811,16 +780,10 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         vis_hurst_avg = [value[0] for value in vis_hurst]
 
         vis_dispen = np.load(vis_dispen_dir + animal + '_dispen.npy')
-        vis_delta_right = np.load(vis_delta_dir + animal + '_right_power.npy')
-        vis_delta_left = np.load(vis_delta_dir + animal + '_left_power.npy')
-        vis_delta = np.mean(vis_delta_left, vis_delta_right)
+        vis_delta = np.load(vis_delta_dir + animal + '_power.npy') 
         vis_theta = np.load(vis_theta_dir + animal + '_power.npy') 
-        vis_sigma_right = np.load(vis_sigma_dir + animal + '_right_power.npy')
-        vis_sigma_left = np.load(vis_sigma_dir + animal + '_left_power.npy')
-        vis_sigma = np.mean(vis_sigma_left, vis_sigma_right)
-        vis_beta_right = np.load(vis_beta_dir + animal + '_right_power.npy')
-        vis_beta_left = np.load(vis_beta_dir + animal + '_left_power.npy')
-        vis_beta = np.mean(vis_beta_left, vis_beta_right)
+        vis_sigma = np.load(vis_sigma_dir + animal + '_power.npy') 
+        vis_beta = np.load(vis_beta_dir + animal + '_power.npy') 
         vis_gamma = np.load(vis_gamma_dir + animal + '_power.npy') 
         
         #vis fooof
