@@ -22,6 +22,7 @@ test_2_ids = ['S7086'] # 'S7063'
 test_1_ids = ['S7076'] #'S7074'
 
 
+
 def prepare_df_one_datafile(ids_1_ls, br_directory, SYNGAP_het, SYNGAP_wt):
     motor_hurst_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Hurst/'
     motor_hfd_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1//Motor/HFD/'
@@ -465,6 +466,9 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
     som_phase_lock_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Phase_Lock_Somato/'
     vis_phase_lock_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Phase_Lock_Visual/'
     
+    fooof_error_animals = ['S7069', 'S7070', 'S7083', 'S7094', 'S7096']
+    fooof_error_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/FOOOF_errors/'
+    
     feature_df_1_ids = []
     for animal in ids_1_ls:
         print(animal)
@@ -490,8 +494,8 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
         motor_offset_left = np.load(motor_fooof_dir + animal + '_motor_offset_left.npy')
         motor_exponent_right = np.load(motor_fooof_dir + animal + '_motor_exponent_right.npy')
         motor_exponent_left = np.load(motor_fooof_dir + animal + '_motor_exponent_left.npy')
-        motor_offset = np.mean([motor_offset_left, motor_offset_right])
-        motor_exponent = np.mean([motor_exponent_left, motor_exponent_right])
+        motor_offset = np.mean([motor_offset_left, motor_offset_right], axis = 0)
+        motor_exponent = np.mean([motor_exponent_left, motor_exponent_right], axis = 0)
         
 
         #somatosensory 
@@ -512,8 +516,8 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
         soma_offset_left = np.load(soma_fooof_dir + animal + '_somato_offset_left.npy')
         soma_exponent_right = np.load(soma_fooof_dir + animal + '_somato_exponent_right.npy')
         soma_exponent_left = np.load(soma_fooof_dir + animal + '_somato_exponent_left.npy')
-        soma_offset = np.mean([soma_offset_left, soma_offset_right])
-        soma_exponent = np.mean([soma_exponent_left, soma_exponent_right])
+        soma_offset = np.mean([soma_offset_left, soma_offset_right], axis = 0)
+        soma_exponent = np.mean([soma_exponent_left, soma_exponent_right], axis = 0)
 
         #vis 
         vis_hfd = np.load(vis_hfd_dir + animal + '_hfd_concat.npy')
@@ -524,8 +528,8 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
         vis_dispen = np.load(vis_dispen_dir + animal + '_dispen.npy')
         vis_delta = np.load(vis_delta_dir + animal + '_power.npy')
         vis_theta = np.load(vis_theta_dir + animal + '_power.npy') 
-        vis_sigma = np.mean(vis_sigma_dir + animal + '_power.npy')
-        vis_beta = np.load(vis_gamma_dir + animal + '_power.npy')
+        vis_sigma = np.load(vis_sigma_dir + animal + '_power.npy')
+        vis_beta = np.load(vis_beta_dir + animal + '_power.npy')
         vis_gamma = np.load(vis_gamma_dir + animal + '_power.npy') 
         
         #vis fooof
@@ -533,8 +537,8 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
         vis_offset_left = np.load(vis_fooof_dir + animal + '_vis_offset_left.npy')
         vis_exponent_right = np.load(vis_fooof_dir + animal + '_vis_exponent_right.npy')
         vis_exponent_left = np.load(vis_fooof_dir + animal + '_vis_exponent_left.npy')
-        vis_offset = np.mean([vis_offset_left, vis_offset_right])
-        vis_exponent = np.mean([vis_exponent_left, vis_exponent_right])
+        vis_offset = np.mean([vis_offset_left, vis_offset_right], axis = 0)
+        vis_exponent = np.mean([vis_exponent_left, vis_exponent_right], axis = 0)
         
 
         #cross cor
@@ -555,7 +559,6 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
 
         #cross_corr_errors
         error_1 = np.load(cross_cor_dir + animal + '_error_br_1.npy')
-
 
         if len(error_1) > 0:
             br_state = np.delete(br_state, error_1)
@@ -589,26 +592,36 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
             som_phase_lock_right = np.delete(som_phase_lock_right, error_1)
             vis_phase_lock_left = np.delete(vis_phase_lock_left, error_1)
             vis_phase_lock_right = np.delete(vis_phase_lock_right, error_1)
-            motor_offset = np.delete(motor_offset, error_1)
-            motor_exponent = np.delete(motor_exponent, error_1)
-            soma_offset = np.delete(soma_offset, error_1)
-            soma_exponent = np.delete(soma_exponent, error_1)
-            vis_offset = np.delete(vis_offset, error_1)
-            vis_exponent = np.delete(vis_exponent, error_1)
+            #motor_offset = np.delete(motor_offset, error_1)
+            #motor_exponent = np.delete(motor_exponent, error_1)
+            #soma_offset = np.delete(soma_offset, error_1)
+            #soma_exponent = np.delete(soma_exponent, error_1)
+            #vis_offset = np.delete(vis_offset, error_1)
+            #vis_exponent = np.delete(vis_exponent, error_1)
         else:
             pass
         
+    
+            
+            
         
-        #print(len(br_state))
-        #print(len(motor_hfd_avg))
-        #print(len(motor_hurst_avg))
-        #print(len(motor_dispen))
-        #print(len(motor_gamma))
-        #print(len(soma_hfd_avg))
-        #print(len(soma_hurst_avg))
-        #print(len(soma_dispen))
-        #print(len(soma_gamma))
-        #print(len(vis_phase_lock_right))
+        print(len(br_state))
+        print(len(motor_offset))
+        print(len(motor_exponent))
+        print(len(soma_offset))
+        print(len(soma_exponent))
+        print(len(vis_offset))
+        print(len(vis_exponent))
+        
+        print(len(motor_hfd_avg))
+        print(len(motor_hurst_avg))
+        print(len(motor_dispen))
+        print(len(motor_gamma))
+        print(len(soma_hfd_avg))
+        print(len(soma_hurst_avg))
+        print(len(soma_dispen))
+        print(len(soma_gamma))
+        print(len(vis_phase_lock_right))
 
          #clean arrays
         #clean_offset = np.delete(fooof_offset_nan, nan_indices)
@@ -679,6 +692,7 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
 
 
 def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNGAP_wt):
+    
     motor_hurst_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/Hurst/'
     motor_hfd_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1//Motor/HFD/'
     motor_dispen_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Motor/DispEn/'
@@ -721,6 +735,11 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
     som_phase_lock_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/Phase_Lock_Somato/'
     vis_phase_lock_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Visual/Phase_Lock_Visual/'
     
+    
+    #FOOOF errors
+    fooof_error_dir = '/home/melissa/RESULTS/XGBoost/SYNGAP1/FOOOF_errors/'
+    fooof_error_animals = ['S7069', 'S7070', 'S7083', 'S7094', 'S7096']
+    
     feature_df_2_ids = []
     for animal in ids_2_ls:
         print(animal)
@@ -749,8 +768,10 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         motor_offset_left = np.load(motor_fooof_dir + animal + '_motor_offset_left.npy')
         motor_exponent_right = np.load(motor_fooof_dir + animal + '_motor_exponent_right.npy')
         motor_exponent_left = np.load(motor_fooof_dir + animal + '_motor_exponent_left.npy')
-        motor_offset = np.mean([motor_offset_left, motor_offset_right])
-        motor_exponent = np.mean([motor_exponent_left, motor_exponent_right])
+        motor_offset = np.mean([motor_offset_left, motor_offset_right], axis = 0)
+        motor_exponent = np.mean([motor_exponent_left, motor_exponent_right], axis = 0)
+        print('motor offset')
+        print(len(motor_offset))
         
         #somatosensory 
         soma_hfd = np.load(soma_hfd_dir + animal + '_hfd_concat.npy')
@@ -770,9 +791,11 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         soma_offset_left = np.load(soma_fooof_dir + animal + '_somato_offset_left.npy')
         soma_exponent_right = np.load(soma_fooof_dir + animal + '_somato_exponent_right.npy')
         soma_exponent_left = np.load(soma_fooof_dir + animal + '_somato_exponent_left.npy')
-        soma_offset = np.mean([soma_offset_left, soma_offset_right])
-        soma_exponent = np.mean([soma_exponent_left, soma_exponent_right])
-
+        soma_offset = np.mean([soma_offset_left, soma_offset_right], axis = 0)
+        soma_exponent = np.mean([soma_exponent_left, soma_exponent_right], axis = 0)
+        print('soma offset')
+        print(len(soma_offset))
+        
         #vis 
         vis_hfd = np.load(vis_hfd_dir + animal + '_hfd_concat.npy')
         vis_hfd_avg = [value[0] for value in vis_hfd]
@@ -791,9 +814,10 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         vis_offset_left = np.load(vis_fooof_dir + animal + '_vis_offset_left.npy')
         vis_exponent_right = np.load(vis_fooof_dir + animal + '_vis_exponent_right.npy')
         vis_exponent_left = np.load(vis_fooof_dir + animal + '_vis_exponent_left.npy')
-        vis_offset = np.mean([vis_offset_left, vis_offset_right])
-        vis_exponent = np.mean([vis_exponent_left, vis_exponent_right])
-        
+        vis_offset = np.mean([vis_offset_left, vis_offset_right], axis = 0)
+        vis_exponent = np.mean([vis_exponent_left, vis_exponent_right], axis = 0)
+        print('vis offset')
+        print(len(vis_offset))
 
         #cross cor
         mot_cross_corr_left = np.load(mot_cross_cor_dir + str(animal) + '_mot_left_cross_cor.npy')
@@ -812,10 +836,14 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         vis_phase_lock_right = np.load(vis_phase_lock_dir + str(animal) + '_vis_right_phase_lock.npy')
 
         #cross_corr_errors
-        error_1 = np.load(cross_cor_dir + animal + '_error_br_1.npy')
         error_2 = np.load(cross_cor_dir + animal + '_error_br_2.npy')
+        error_1 = np.load(cross_cor_dir + animal + '_error_br_1.npy')
+        print('cross cor errors')
+        print(error_1)
+        print(error_2)
         
-       
+        #fooof error 
+        #fooof_error = np.load(fooof_error_dir + animal + '_error_indices.npy')
         
         if len(error_1) > 0 and len(error_2) >0:
             print(animal + ' error')
@@ -852,12 +880,12 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
             som_phase_lock_right = np.delete(som_phase_lock_right, errors)
             vis_phase_lock_left = np.delete(vis_phase_lock_left, errors)
             vis_phase_lock_right = np.delete(vis_phase_lock_right, errors)
-            motor_offset = np.delete(motor_offset, errors)
-            motor_exponent = np.delete(motor_exponent, errors)
-            soma_offset = np.delete(soma_offset, errors)
-            soma_exponent = np.delete(soma_exponent, errors)
-            vis_offset = np.delete(vis_offset, errors)
-            vis_exponent = np.delete(vis_exponent, errors)
+            #motor_offset = np.delete(motor_offset, errors)
+            #motor_exponent = np.delete(motor_exponent, errors)
+            #soma_exponent = np.delete(soma_exponent, errors)
+            ##soma_offset = np.delete(soma_offset, errors)
+            #vis_offset = np.delete(vis_offset, errors)
+            #vis_exponent = np.delete(vis_exponent, errors)
             
         elif len(error_1) > 0:
             br_state = np.delete(br_state, error_1)
@@ -891,12 +919,12 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
             som_phase_lock_right = np.delete(som_phase_lock_right, error_1)
             vis_phase_lock_left = np.delete(vis_phase_lock_left, error_1)
             vis_phase_lock_right = np.delete(vis_phase_lock_right, error_1)
-            motor_offset = np.delete(motor_offset, error_1)
-            motor_exponent = np.delete(motor_exponent, error_1)
-            soma_offset = np.delete(soma_offset, error_1)
-            soma_exponent = np.delete(soma_exponent, error_1)
-            vis_offset = np.delete(vis_offset, error_1)
-            vis_exponent = np.delete(vis_exponent, error_1)
+            #motor_offset = np.delete(motor_offset, error_1)
+            #motor_exponent = np.delete(motor_exponent, error_1)
+            #soma_offset = np.delete(soma_offset, error_1)
+            #soma_exponent = np.delete(soma_exponent, error_1)
+            #vis_offset = np.delete(vis_offset, error_1)
+            #vis_exponent = np.delete(vis_exponent, error_1)
             
         elif len(error_2) > 0:
             print(animal + ' error 2')
@@ -932,15 +960,59 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
             som_phase_lock_right = np.delete(som_phase_lock_right, error_2_br_2)
             vis_phase_lock_left = np.delete(vis_phase_lock_left, error_2_br_2)
             vis_phase_lock_right = np.delete(vis_phase_lock_right, error_2_br_2)
-            motor_offset = np.delete(motor_offset, error_2_br_2)
-            motor_exponent = np.delete(motor_exponent, error_2_br_2)
-            soma_offset = np.delete(soma_offset, error_2_br_2)
-            soma_exponent = np.delete(soma_exponent, error_2_br_2)
-            vis_offset = np.delete(vis_offset, error_2_br_2)
-            vis_exponent = np.delete(vis_exponent, error_2_br_2)
+            #motor_offset = np.delete(motor_offset, error_2_br_2)
+            #motor_exponent = np.delete(motor_exponent, error_2_br_2)
+            #soma_offset = np.delete(soma_offset, error_2_br_2)
+            #soma_exponent = np.delete(soma_exponent, error_2_br_2)
+            #vis_offset = np.delete(vis_offset, error_2_br_2)
+            #vis_exponent = np.delete(vis_exponent, error_2_br_2)
         else:
             pass
         
+        #print(len(motor_offset))
+        #print(len(motor_exponent))
+        #print(len(vis_offset))
+        #print(len(vis_exponent))
+        #print(len(soma_exponent))
+        #print(len(soma_offset))
+        #
+        #print(len(motor_hfd_avg))
+        #print(len(motor_hurst_avg)) 
+        #print(len(motor_dispen))
+        #print(len(motor_delta))
+        #print(len(motor_theta))
+        #print(len(motor_sigma ))
+        #print(len(motor_beta)) 
+        #print(len(motor_gamma ))
+        #print(len(soma_hfd_avg))
+        #print(len(soma_hurst_avg)) 
+        #print(len(soma_dispen))
+        #print(len(soma_delta))
+        #print(len(soma_theta))
+        #print(len(soma_sigma ))
+        #print(len(soma_beta)) 
+        #print(len(soma_gamma ))
+        #print(len(vis_hfd_avg ))
+        #print(len(vis_hurst_avg ))
+        #print(len(vis_dispen ))
+        #print(len(vis_delta ))
+        #print(len(vis_theta ))
+        #print(len(vis_sigma ))
+        #print(len(vis_beta))
+        #print(len(vis_gamma))
+        #print(len( mot_phase_lock_left))
+        #print(len(mot_phase_lock_right ))
+        #print(len(som_phase_lock_left ))
+        #print(len(som_phase_lock_right ))
+        #print(len(vis_phase_lock_left ))
+        #print(len(vis_phase_lock_right ))
+        
+        print(len(mot_cross_corr_left ))
+        print(len(mot_cross_corr_right)) 
+        print(len(som_cross_corr_left ))
+        print(len(som_cross_corr_right ))
+        print(len(vis_cross_corr_left ))
+        print(len(vis_cross_corr_left ))
         
         
          #clean arrays
@@ -960,7 +1032,7 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
         else:
                 print(animal + ' not in either list')
     
-        
+    
         region_dict = {'Genotype': [genotype]*len(motor_gamma), 
                        'Animal_ID': [animal]*len(motor_gamma),
                        'SleepStage': br_state,
