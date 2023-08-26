@@ -73,7 +73,8 @@ class FindNoiseThreshold:
             else:
                 pass
         
-        
+        all_values_slope = np.array(slope_ls)
+        all_values_intcpt = np.array(intercept_ls)
         slope_mean = np.mean((np.array(slope_ls)), axis=0)
         int_mean = np.mean((np.array(intercept_ls)), axis=0)
         std_slope = np.std(slope_mean, axis = 0)
@@ -84,4 +85,4 @@ class FindNoiseThreshold:
         
         slope_thresh = round(slope_mean.min() - 3*std_slope)
         
-        return slope_thresh, int_thresh
+        return all_values_slope, all_values_intcpt, slope_thresh, int_thresh
