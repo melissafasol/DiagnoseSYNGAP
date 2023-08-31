@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np 
 
 results_path = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Phase_Lock_Val/'
-br_directory = '/home/melissa/PREPROCESSING/SYNGAP1/numpyformat_baseline/'
+br_directory = '/home/melissa/PREPROCESSING/SYNGAP1/br_files_XGBoost'
  
 ids = [ 'S7088', 'S7092', 'S7094' , 'S7098', 'S7068', 'S7074', 'S7076', 'S7071', 'S7075',
       'S7070','S7072','S7083', 'S7063','S7064','S7069', 'S7086', 'S7091', 'S7101', 'S7096']
@@ -56,7 +56,7 @@ def prepare_df_one_datafile(ids_1_ls, br_directory, SYNGAP_het, SYNGAP_wt):
     for animal in ids_1_ls:
         print(animal)
         #load br file 
-        br_1 = pd.read_pickle(br_directory + str(animal) + '_BL1.pkl')
+        br_1 = pd.read_csv(br_directory + str(animal) + '_BL1.csv')
         br_state = br_1['brainstate'].to_numpy()
 
         #motor 
@@ -232,8 +232,8 @@ def prepare_df_two_datafile(ids_2_ls, br_directory, SYNGAP_het, SYNGAP_wt):
     for animal in ids_2_ls:
         print(animal)
         #load br file 
-        br_1 = pd.read_pickle(br_directory + str(animal) + '_BL1.pkl')
-        br_2 = pd.read_pickle(br_directory + str(animal) + '_BL2.pkl')
+        br_1 = pd.read_csv(br_directory + str(animal) + '_BL1.csv')
+        br_2 = pd.read_csv(br_directory + str(animal) + '_BL2.csv')
         br_state_1 = br_1['brainstate'].to_numpy()
         br_state_2 = br_2['brainstate'].to_numpy()
         br_state = np.concatenate([br_state_1, br_state_2])
@@ -473,7 +473,7 @@ def prepare_df_one_no_feature_selection(ids_1_ls, br_directory, SYNGAP_het, SYNG
     for animal in ids_1_ls:
         print(animal)
         #load br file 
-        br_1 = pd.read_pickle(br_directory + str(animal) + '_BL1.pkl')
+        br_1 = pd.read_csv(br_directory + str(animal) + '_BL1.csv')
         br_state = br_1['brainstate'].to_numpy()
 
         #motor 
@@ -744,8 +744,8 @@ def prepare_df_two_no_feature_selection(ids_2_ls, br_directory, SYNGAP_het, SYNG
     for animal in ids_2_ls:
         print(animal)
         #load br file 
-        br_1 = pd.read_pickle(br_directory + str(animal) + '_BL1.pkl')
-        br_2 = pd.read_pickle(br_directory + str(animal) + '_BL2.pkl')
+        br_1 = pd.read_csv(br_directory + str(animal) + '_BL1.csv')
+        br_2 = pd.read_csv(br_directory + str(animal) + '_BL2.csv')
         br_state_1 = br_1['brainstate'].to_numpy()
         br_state_2 = br_2['brainstate'].to_numpy()
         br_state = np.concatenate([br_state_1, br_state_2])
