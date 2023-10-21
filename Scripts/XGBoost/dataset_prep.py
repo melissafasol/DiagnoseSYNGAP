@@ -168,26 +168,29 @@ def prepare_df_one_datafile(ids_1_ls, br_directory, SYNGAP_het, SYNGAP_wt):
         region_dict = {'Genotype': [genotype]*len(motor_dispen), 
                        'Animal_ID': [animal]*len(motor_gamma),
                        'SleepStage': br_state,
-                       'Motor_DispEn': motor_dispen, 'Motor_Hurst': motor_hurst_avg, 
+                       'Motor_DispEn': motor_dispen, 
+                       #'Motor_Hurst': motor_hurst_avg, 
                        'Motor_HFD': motor_hfd_avg,
-                       'Motor_Gamma': motor_gamma, 'Motor_Theta': motor_theta,
-                       #'Soma_DispEn': soma_dispen,
+                       'Motor_Gamma': motor_gamma, 
+                       'Motor_Theta': motor_theta,
+                       'Soma_DispEn': soma_dispen,
                        'Soma_Hurst': soma_hurst_avg,
                        'Soma_HFD': soma_hfd_avg,
                        'Soma_Gamma': soma_gamma,'Soma_Theta': soma_theta,
                        'Visual_DispEn': vis_dispen,
-                       #'Visual_Hurst': vis_hurst_avg,
-                       #'Visual_HFD': vis_hfd_avg, 
+                       'Visual_Hurst': vis_hurst_avg,
+                       'Visual_HFD': vis_hfd_avg, 
                        'Vis_Gamma': vis_gamma, 
                        'Vis_Theta': vis_theta,
                        'Mot_CC_Right': mot_cross_corr_right,
-                       #'Mot_CC_Left': mot_cross_corr_left,
+                       'Mot_CC_Left': mot_cross_corr_left,
                        'Som_CC_Right': som_cross_corr_right, 'Som_CC_Left': som_cross_corr_left,
                        'Vis_CC_Right': vis_cross_corr_right, 'Mot_CC_Left': vis_cross_corr_left,
                        'Mot_PL_Right': mot_phase_lock_right, 'Mot_PL_Left': mot_phase_lock_left,
-                       'Som_PL_Right': som_phase_lock_right, 'Som_PL_Left': som_phase_lock_left,
-                       'Vis_PL_Right': vis_phase_lock_right} 
-                       #'Vis_PL_Left': vis_phase_lock_left}
+                       'Som_PL_Right': som_phase_lock_right, 
+                       'Som_PL_Left': som_phase_lock_left,
+                       'Vis_PL_Right': vis_phase_lock_right,
+                       'Vis_PL_Left': vis_phase_lock_left}
 
 
         region_df = pd.DataFrame(data = region_dict)
@@ -391,26 +394,26 @@ def prepare_df_two_datafile(ids_2_ls, br_directory, SYNGAP_het, SYNGAP_wt):
                        'Animal_ID': [animal]*len(motor_gamma),
                        'SleepStage': br_state,
                        'Motor_DispEn': motor_dispen, 
-                       'Motor_Hurst': motor_hurst_avg, 
+                       #'Motor_Hurst': motor_hurst_avg, 
                        'Motor_HFD': motor_hfd_avg,
                        'Motor_Gamma': motor_gamma,
-                       'Motor_Theta': motor_theta,
-                       #'Soma_DispEn': soma_dispen,
+                       #'Motor_Theta': motor_theta,
+                       'Soma_DispEn': soma_dispen,
                        'Soma_Hurst': soma_hurst_avg,
                        'Soma_HFD': soma_hfd_avg,
                        'Soma_Gamma': soma_gamma,'Soma_Theta': soma_theta,
                        'Visual_DispEn': vis_dispen,
-                       #'Visual_Hurst': vis_hurst_avg,'Visual_HFD': vis_hfd_avg,
+                       'Visual_Hurst': vis_hurst_avg,'Visual_HFD': vis_hfd_avg,
                        'Vis_Gamma': vis_gamma, 
                        'Vis_Theta': vis_theta,
                        'Mot_CC_Right': mot_cross_corr_right, 
-                       #'Mot_CC_Left': mot_cross_corr_left,
+                       'Mot_CC_Left': mot_cross_corr_left,
                        'Som_CC_Right': som_cross_corr_right, 'Som_CC_Left': som_cross_corr_left,
                        'Vis_CC_Right': vis_cross_corr_right, 'Mot_CC_Left': vis_cross_corr_left,
                        'Mot_PL_Right': mot_phase_lock_right, 'Mot_PL_Left': mot_phase_lock_left,
                        'Som_PL_Right': som_phase_lock_right, 'Som_PL_Left': som_phase_lock_left,
-                       'Vis_PL_Right': vis_phase_lock_right}
-                       #'Vis_PL_Left': vis_phase_lock_left}
+                       'Vis_PL_Right': vis_phase_lock_right,
+                       'Vis_PL_Left': vis_phase_lock_left}
         
         
         region_df = pd.DataFrame(data = region_dict)
