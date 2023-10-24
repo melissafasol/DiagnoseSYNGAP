@@ -12,7 +12,7 @@ from preprocess_human import load_filtered_data, split_into_epochs, identify_noi
 
 human_data_folder = '/home/melissa/PREPROCESSING/SYNGAP1/SYNGAP1_Human_Data/'
 save_directory = '/home/melissa/RESULTS/HUMAN/harmonics_plots/'
-patient_list = ['P3 N1', 'P3 N2', 'P4 N1', 'P4 N2', 'P5 N1','P6 N1', 'P6 N2', 'P7 N1', 'P7 N2', 'P8 N1']
+patient_list = ['P23 N2', 'P23 N3', 'P21 N3']
                 #'P3 N1', 'P3 N2', 'P4 N1', 'P4 N2', 'P5 N1', 
                #'P27 N1', 'P27 N2', 'P28 N1', 'P28 N2', 'P29 N1', 'P29 N2', 'P30 N1', 'P30 N2']  
                 ##'P24 N1', 'P24 N2', 'P25 N1', 'P25 N2', 'P26 N1', 'P26 N2',

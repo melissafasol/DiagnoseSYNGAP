@@ -12,11 +12,17 @@ from mne_features.univariate import compute_higuchi_fd, compute_hurst_exp
 from preprocess_human import load_filtered_data, split_into_epochs, select_clean_indices
 
 human_data_folder = '/home/melissa/PREPROCESSING/SYNGAP1/SYNGAP1_Human_Data'
-results_path = '/home/melissa/RESULTS/XGBoost/Human_SYNGAP1/Alpha_Power/'
+results_path = '/home/melissa/RESULTS/XGBoost/Human_SYNGAP1/Delta_Power/'
 noise_directory = '/home/melissa/PREPROCESSING/SYNGAP1/human_npy/harmonic_idx/'
 
-patient_list  = ['P1 N1', 'P10 N1', 'P11 N1', 'P15 N1', 'P16 N1', 'P17 N1', 'P18 N1', 'P20 N1', 'P21 N1', 'P21 N2', 'P22 N1',
-             'P23 N1', 'P24 N1', 'P28 N1', 'P28 N2', 'P29 N2', 'P30 N1']
+patient_list  = [ 'P27 N1']
+    
+    #'P23 N2', 'P23 N3', 'P21 N3'
+
+#['P3 N1', 'P3 N2', 'P4 N1', 'P4 N2', 'P5 N1','P6 N1', 'P6 N2', 'P7 N1', 'P7 N2', 'P8 N1']
+
+            #['P1 N1', 'P10 N1', 'P11 N1', 'P15 N1', 'P16 N1', 'P17 N1', 'P18 N1', 'P20 N1', 'P21 N1', 'P21 N2', 'P22 N1',
+            # 'P23 N1', 'P24 N1', 'P28 N1', 'P28 N2', 'P29 N2', 'P30 N1']
 
 
 #indices for frequency bands
@@ -28,6 +34,7 @@ patient_list  = ['P1 N1', 'P10 N1', 'P11 N1', 'P15 N1', 'P16 N1', 'P17 N1', 'P18
 
 for patient in patient_list:
     print(patient)
+    print('delta')
     file_name = patient + '_(1).edf'
     filtered_data = load_filtered_data(file_path = human_data_folder, file_name = file_name)
     number_epochs, epochs = split_into_epochs(filtered_data, sampling_rate = 256, num_seconds = 30)
@@ -38,7 +45,7 @@ for patient in patient_list:
         power_ls = []
         for clean_idx in clean_indices:
             power_calculations = scipy.signal.welch(epochs[clean_idx][chan], window = 'hann', fs = 256, nperseg = 7680)
-            avg_power = np.mean(power_calculations[1][240:361])
+            avg_power = np.mean(power_calculations[1][15:61])
             power_ls.append(avg_power)
 
         power_array = np.array(power_ls)

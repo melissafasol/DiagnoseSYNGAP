@@ -1,7 +1,8 @@
 import os 
+import sys
 import numpy as np 
 import pandas as pd 
-import maptlotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 import scipy
 from sklearn import mixture
@@ -29,6 +30,11 @@ def extract_visual_scores_packet_loss(path_to_data, file_name, column_name, targ
     column_data = [cell.value for cell in visual_sheet[column_name]]
     
     vis_score_noise = np.array(column_data[1:17281])
+    
+    for idx, value in enumerate(vis_score_noise):
+        if value == None:
+            print(idx)
+            
     noise_unique, noise_counts = np.unique(vis_score_noise, return_counts=True)
     print('unique values')
     print(noise_unique)
@@ -46,11 +52,11 @@ def extract_visual_scores_packet_loss(path_to_data, file_name, column_name, targ
     target_value = 1
     noise_indices = find_indices(vis_score_noise, target_value)
 
-    return noise_indices
+    return vis_score_noise, noise_indices
 
 
 def remove_typical_packet_loss(packet_loss_dir, file_name):
-    
+    '''remove indices with mV values > 3000 mV'''
     file = pd.read_pickle(str(packet_loss_dir) + str(file_name))
     packet_loss = file.loc[file['brainstate'] == 6]
     packet_loss_indices = np.array(packet_loss.index)
@@ -58,11 +64,22 @@ def remove_typical_packet_loss(packet_loss_dir, file_name):
     return packet_loss_indices
 
 
+def extract_sleep_stages(file_path, file_name, column_name):
+    '''function to extract sleep stages from visually scored data'''
+    workbook = openpyxl.load_workbook(str(file_path) + str(file_name))
+    sheet = workbook.active
+    column_data = [cell.value for cell in sheet[column_name]]
+    test_vis_score = column_data[8:17288]
+    vis_score = np.array(test_vis_score)
+    
+    return vis_score
+
+
 def generate_3d_data(emg_array, eeg_array, noise_indices):
     
     '''calculate features to feed into GMM'''
     
-    indices = np.arange(1, 17281, 1)
+    indices = np.arange(0, 17280, 1)
     
     array_3D_ls = []
     
@@ -70,32 +87,30 @@ def generate_3d_data(emg_array, eeg_array, noise_indices):
         if idx in noise_indices:
             pass
         else:
-            epoch_data_ls = []
-            freq, power_emg = scipy.signal.welch(emg_epoch, window='hann', fs=250.4, nperseg=1252)
-            freq, power_eeg = scipy.signal.welch(eeg_epoch, window='hann', fs=250.4, nperseg=1252)
-        
-            num_coefficients = 21
-            freq_theta = power_eeg[29:42]
-            smoothed_theta_power = np.max(np.log(np.convolve(freq_theta, np.ones(num_coefficients)/num_coefficients, mode='same')))
-            
-            gamma_eeg = np.mean(np.log(power_eeg[150:240]))
-            freq_eeg = np.mean(np.log(power_eeg[5:101]))
-            freq_emg = np.mean(np.log(power_emg[300:451]))
-            epoch_data_ls.append(smoothed_theta_power)
-            epoch_data_ls.append(freq_eeg)
-            epoch_data_ls.append(freq_emg)
-            epoch_data_ls.append(gamma_eeg)
-            array_3D_ls.append(epoch_data_ls)
+            try:
+                epoch_data_ls = []
+                freq, power_emg = scipy.signal.welch(emg_epoch, window='hann', fs=250.4, nperseg=1252)
+                freq, power_eeg = scipy.signal.welch(eeg_epoch, window='hann', fs=250.4, nperseg=1252)
+                slope, intercept = np.polyfit(freq, power_eeg, 1)
+                #smoothed_theta_power = np.max(np.log(np.convolve(freq_theta, np.ones(num_coefficients)/num_coefficients, mode='same')))
+
+                gamma_slope, gamma_intercept = np.polyfit(freq[150:241], power_eeg[150:241], 1)
+
+                epoch_data_ls.append(gamma_slope)
+                epoch_data_ls.append(slope)
+                array_3D_ls.append(epoch_data_ls)
+            except:
+                print(idx)
     
     all_epochs = np.array(array_3D_ls)
     
 
     # Initialize the StandardScaler
-    scaler = StandardScaler()
+    #scaler = StandardScaler()
 
     # Fit the scaler to your data and transform it
-    standardized_epochs = scaler.fit_transform(all_epochs)
+    #standardized_epochs = scaler.fit_transform(all_epochs)
     
-    return standardized_epochs
+    return all_epochs #all_epochs #standardized_epochs
 
 

@@ -1,6 +1,0 @@
-- hyperopt tuning - reduce overfitiing, 
-- try different method other than effective xgboost method 
-- compare other models to xgboost for paper 
-- time stamps for human data 
-- finish running FOOOF for all animals 
-- retrain data with FOOOOF results

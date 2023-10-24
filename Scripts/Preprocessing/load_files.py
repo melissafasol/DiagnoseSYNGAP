@@ -27,9 +27,10 @@ class LoadFiles():
         
         start_time_1 = start_times_dict[self.start_dict_1]
         start_time_2 = start_times_dict[self.start_dict_2]
+        
         end_time_1 = end_times_dict[self.end_dict_1]
         end_time_2 = end_times_dict[self.end_dict_2]
-        
+
         recording_1 = recording[:, start_time_1: end_time_1 + 1]
         recording_2 = recording[:, start_time_2: end_time_2 + 1]
         

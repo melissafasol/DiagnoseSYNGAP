@@ -16,6 +16,13 @@ import xgboost as xgb
 from xgboost.sklearn import XGBClassifier
 
 
+#Rejected features: 01_M2_cross_cor, alpha_F3, F3_O1_phase_lock, alpha_C3, alpha_M2,
+#E1_E2_phase_lock, delta_E2, alpha_E1, theta_O1,theta_E1, Hurst_E2, delta_O1, dispen_M2,
+#alpha_O1, E1_F3_phase_lock, E1_C3_phase_lock, beta_F3, beta_E1, Dispen_F3, delta_C3, 
+#alpha_E2, hurst_C3, 
+
+
+
 def prepare_dataset(prepare_human_ids, SYNGAP_ls, WT_ls):
     
     hurst_dir = '/home/melissa/RESULTS/XGBoost/Human_SYNGAP1/Hurst/'
@@ -128,51 +135,56 @@ def prepare_dataset(prepare_human_ids, SYNGAP_ls, WT_ls):
             
    
     
-        human_df = pd.DataFrame(data = {'Genotype': [genotype]*len(chan_E1_dispen), 
+        human_df = pd.DataFrame(data = {
+                  'Patient_ID': [patient]*len(chan_E1_dispen),
+                  'Genotype': [genotype]*len(chan_E1_dispen), 
                   'Hurst_E1': chan_E1_hurst, 
                   'Hurst_E2': chan_E2_hurst,
-                  'Hurst_O1' : chan_O1_hurst,'Hurst_C3': chan_C3_hurst,
+                  'Hurst_O1' : chan_O1_hurst,
+                  'Hurst_C3': chan_C3_hurst,
                   'Hurst_F3': chan_F3_hurst, 
                   'Hurst_M2': chan_M2_hurst,
                   
                   'Dispen_E1': chan_E1_dispen,
-                  #'Dispen_E2': chan_E2_dispen,
-                  #'Dispen_O1' : chan_O1_dispen,
-                  # 'Dispen_C3': chan_C3_dispen,
-                  #'Dispen_F3': chan_F3_dispen, 
+                  'Dispen_E2': chan_E2_dispen,
+                  'Dispen_O1' : chan_O1_dispen,'Dispen_C3': chan_C3_dispen,
+                  'Dispen_F3': chan_F3_dispen, 
                   'Dispen_M2': chan_M2_dispen,
                   
-                  #'Exp_E1': chan_E1_exp, 
-                  #'Exp_E2': chan_E2_exp,
-                  #'Exp_O1' : chan_O1_exp,
-                  'Exp_C3': chan_C3_exp,
-                  'Exp_F3': chan_F3_exp, 
-                  'Exp_M2': chan_M2_exp,
+                  'Exp_E1': chan_E1_exp, 
+                  'Exp_E2': chan_E2_exp,
+                  'Exp_O1' : chan_O1_exp,'Exp_C3': chan_C3_exp,
+                  'Exp_F3': chan_F3_exp, 'Exp_M2': chan_M2_exp,
                   
-                  'Off_E1': chan_E1_offset, 
-                  'Off_E2': chan_E2_offset,
-                  #'Off_O1' : chan_O1_offset,                  
-                  #'Off_C3': chan_C3_offset,
+                  'Off_E1': chan_E1_offset, 'Off_E2': chan_E2_offset,
+                  'Off_O1' : chan_O1_offset,                  
+                  'Off_C3': chan_C3_offset,
+                  'Off_M2': chan_M2_offset,
                   'Off_F3': chan_F3_offset, 
-                  #'Off_M2': chan_M2_offset,
                   
-                  #'delta_E1': chan_E1_delta,
-                  #'delta_E2': chan_E2_delta,
+                  'delta_E1': chan_E1_delta,
+                  'delta_E2': chan_E2_delta,
                   'delta_O1' : chan_O1_delta,
                   'delta_C3': chan_C3_delta,
-                  #'delta_F3': chan_F3_delta, 
-                  # 'delta_M2': chan_M2_delta,
+                  'delta_F3': chan_F3_delta,
+                   'delta_M2': chan_M2_delta,
                   
-                  'theta_E1': chan_E1_theta, 'delta_E2': chan_E2_theta,
-                  'theta_O1' : chan_O1_theta,'delta_C3': chan_C3_theta,
+                  'theta_E1': chan_E1_theta,
+                  'delta_E2': chan_E2_theta,
+                  'theta_O1' : chan_O1_theta,
+                  'delta_C3': chan_C3_theta,
                   'theta_F3': chan_F3_theta, 'delta_M2': chan_M2_theta,
                   
-                  'alpha_E1': chan_E1_alpha, 'alpha_E2': chan_E2_alpha,
-                  'alpha_O1' : chan_O1_alpha,'alpha_C3': chan_C3_alpha,
+                  'alpha_E1': chan_E1_alpha, 
+                  'alpha_E2': chan_E2_alpha,
+                  'alpha_O1' : chan_O1_alpha,
+                 'alpha_C3': chan_C3_alpha,
                   'alpha_F3': chan_F3_alpha, 'alpha_M2': chan_M2_alpha,
                   
-                  'beta_E1': chan_E1_beta, 'delta_E2': chan_E2_beta,
-                  'beta_O1' : chan_O1_beta,'delta_C3': chan_C3_beta,
+                  'beta_E1': chan_E1_beta, 
+                  'delta_E2': chan_E2_beta,
+                  'beta_O1' : chan_O1_beta,
+                  'delta_C3': chan_C3_beta,
                   'beta_F3': chan_F3_beta, 'delta_M2': chan_M2_beta,
                     
                   'E1_E2_cross_corr': E1_E2_cross_corr, 'E1_F3_cross_corr': E1_F3_cross_corr,
@@ -187,7 +199,8 @@ def prepare_dataset(prepare_human_ids, SYNGAP_ls, WT_ls):
                   'O1_M2_cross_corr': O1_M2_cross_corr,
                  
                   'E1_E2_phase_lock': E1_E2_phase_lock, 'E1_F3_phase_lock': E1_F3_phase_lock,
-                  'E1_C3_phase_lock': E1_C3_phase_lock, 'E1_O1_phase_lock': E1_O1_phase_lock,
+                  'E1_C3_phase_lock': E1_C3_phase_lock,
+                  'E1_O1_phase_lock': E1_O1_phase_lock,
                   'E1_M2_phase_lock': E1_M2_phase_lock, 'E2_F3_phase_lock': E2_F3_phase_lock,
                   'E2_C3_phase_lock': E2_C3_phase_lock, 
                                     
@@ -196,7 +209,8 @@ def prepare_dataset(prepare_human_ids, SYNGAP_ls, WT_ls):
                   'E2_M2_phase_lock': E2_M2_phase_lock, 'F3_C3_phase_lock': F3_C3_phase_lock,
                   'F3_O1_phase_lock': F3_O1_phase_lock, 
                   'F3_M2_phase_lock': F3_M2_phase_lock,
-                  'C3_O1_phase_lock': C3_O1_phase_lock, 'C3_M2_phase_lock': C3_M2_phase_lock,
+                  'C3_O1_phase_lock': C3_O1_phase_lock, 
+                  'C3_M2_phase_lock': C3_M2_phase_lock,
                   'O1_M2_phase_lock': O1_M2_phase_lock})
   
         #print(human_dict)
@@ -321,44 +335,52 @@ def prepare_dataset_nofs(prepare_human_ids, SYNGAP_ls, WT_ls):
     
         human_df = pd.DataFrame(data = {'Genotype': [genotype]*len(chan_E1_dispen), 
                   'Hurst_E1': chan_E1_hurst, 
-                  'Hurst_E2': chan_E2_hurst,
-                  'Hurst_O1' : chan_O1_hurst,'Hurst_C3': chan_C3_hurst,
+                  #'Hurst_E2': chan_E2_hurst,
+                  #'Hurst_O1' : chan_O1_hurst,
+                  #'Hurst_C3': chan_C3_hurst,
                   'Hurst_F3': chan_F3_hurst, 
-                  'Hurst_M2': chan_M2_hurst,
+                  #'Hurst_M2': chan_M2_hurst,
                   
                   'Dispen_E1': chan_E1_dispen,
-                  'Dispen_E2': chan_E2_dispen,
+                  #'Dispen_E2': chan_E2_dispen,
                   'Dispen_O1' : chan_O1_dispen,'Dispen_C3': chan_C3_dispen,
-                  'Dispen_F3': chan_F3_dispen, 
-                  'Dispen_M2': chan_M2_dispen,
+                  #'Dispen_F3': chan_F3_dispen, 
+                  #'Dispen_M2': chan_M2_dispen,
                   
-                  'Exp_E1': chan_E1_exp, 
-                  'Exp_E2': chan_E2_exp,
-                  'Exp_O1' : chan_O1_exp,'Exp_C3': chan_C3_exp,
-                  'Exp_F3': chan_F3_exp, 'Exp_M2': chan_M2_exp,
+                  #'Exp_E1': chan_E1_exp, 
+                  #'Exp_E2': chan_E2_exp,
+                  #'Exp_O1' : chan_O1_exp,'Exp_C3': chan_C3_exp,
+                  #'Exp_F3': chan_F3_exp, 'Exp_M2': chan_M2_exp,
                   
-                  'Off_E1': chan_E1_offset, 'Off_E2': chan_E2_offset,
-                  'Off_O1' : chan_O1_offset,                  
-                  'Off_C3': chan_C3_offset,
-                  'Off_F3': chan_F3_offset, 
-                  'Off_M2': chan_M2_offset,
+                  #'Off_E1': chan_E1_offset, 'Off_E2': chan_E2_offset,
+                  #'Off_O1' : chan_O1_offset,                  
+                  #'Off_C3': chan_C3_offset,
+                  #'Off_M2': chan_M2_offset,
+                  #'Off_F3': chan_F3_offset, 
                   
                   'delta_E1': chan_E1_delta,
                   'delta_E2': chan_E2_delta,
-                  'delta_O1' : chan_O1_delta,
-                  'delta_C3': chan_C3_delta,
-                  'delta_F3': chan_F3_delta, 'delta_M2': chan_M2_delta,
+                  #'delta_O1' : chan_O1_delta,
+                  #'delta_C3': chan_C3_delta,
+                  #'delta_F3': chan_F3_delta,
+                  # 'delta_M2': chan_M2_delta,
                   
-                  'theta_E1': chan_E1_theta, 'delta_E2': chan_E2_theta,
-                  'theta_O1' : chan_O1_theta,'delta_C3': chan_C3_theta,
+                  'theta_E1': chan_E1_theta,
+                  'delta_E2': chan_E2_theta,
+                  #'theta_O1' : chan_O1_theta,
+                  'delta_C3': chan_C3_theta,
                   'theta_F3': chan_F3_theta, 'delta_M2': chan_M2_theta,
                   
-                  'alpha_E1': chan_E1_alpha, 'alpha_E2': chan_E2_alpha,
-                  'alpha_O1' : chan_O1_alpha,'alpha_C3': chan_C3_alpha,
+                  #'alpha_E1': chan_E1_alpha, 
+                  #'alpha_E2': chan_E2_alpha,
+                  #'alpha_O1' : chan_O1_alpha,
+                  # 'alpha_C3': chan_C3_alpha,
                   'alpha_F3': chan_F3_alpha, 'alpha_M2': chan_M2_alpha,
                   
-                  'beta_E1': chan_E1_beta, 'delta_E2': chan_E2_beta,
-                  'beta_O1' : chan_O1_beta,'delta_C3': chan_C3_beta,
+                  #'beta_E1': chan_E1_beta, 
+                 #'delta_E2': chan_E2_beta,
+                  'beta_O1' : chan_O1_beta,
+                  #'delta_C3': chan_C3_beta,
                   'beta_F3': chan_F3_beta, 'delta_M2': chan_M2_beta,
                     
                   'E1_E2_cross_corr': E1_E2_cross_corr, 'E1_F3_cross_corr': E1_F3_cross_corr,
@@ -370,19 +392,21 @@ def prepare_dataset_nofs(prepare_human_ids, SYNGAP_ls, WT_ls):
                   'E2_M2_cross_corr': E2_M2_cross_corr, 'F3_C3_cross_corr': F3_C3_cross_corr,
                   'F3_O1_cross_corr': F3_O1_cross_corr, 'F3_M2_cross_corr': F3_M2_cross_corr,
                   'C3_O1_cross_corr': C3_O1_cross_corr, 'C3_M2_cross_corr': C3_M2_cross_corr,
-                  'O1_M2_cross_corr': O1_M2_cross_corr,
+                  #'O1_M2_cross_corr': O1_M2_cross_corr,
                  
                   'E1_E2_phase_lock': E1_E2_phase_lock, 'E1_F3_phase_lock': E1_F3_phase_lock,
-                  'E1_C3_phase_lock': E1_C3_phase_lock, 'E1_O1_phase_lock': E1_O1_phase_lock,
+                  'E1_C3_phase_lock': E1_C3_phase_lock,
+                  #'E1_O1_phase_lock': E1_O1_phase_lock,
                   'E1_M2_phase_lock': E1_M2_phase_lock, 'E2_F3_phase_lock': E2_F3_phase_lock,
-                  'E2_C3_phase_lock': E2_C3_phase_lock, 
+                  #'E2_C3_phase_lock': E2_C3_phase_lock, 
                                     
                                     
                   'E2_O1_phase_lock': E2_O1_phase_lock,
                   'E2_M2_phase_lock': E2_M2_phase_lock, 'F3_C3_phase_lock': F3_C3_phase_lock,
-                  'F3_O1_phase_lock': F3_O1_phase_lock, 
+                  #'F3_O1_phase_lock': F3_O1_phase_lock, 
                   'F3_M2_phase_lock': F3_M2_phase_lock,
-                  'C3_O1_phase_lock': C3_O1_phase_lock, 'C3_M2_phase_lock': C3_M2_phase_lock,
+                  #'C3_O1_phase_lock': C3_O1_phase_lock, 
+                  'C3_M2_phase_lock': C3_M2_phase_lock,
                   'O1_M2_phase_lock': O1_M2_phase_lock})
   
         #print(human_dict)

@@ -15,12 +15,14 @@ patient_list = ['P1 N1', 'P3 N1', 'P3 N2', 'P4 N1', 'P4 N2', 'P5 N1','P6 N1', 'P
 clean_directory = '/home/melissa/PREPROCESSING/SYNGAP1/SYNGAP_Human_Data_Clean/'  
 save_directory = '/home/melissa/RESULTS/GRAPH/'
 
-methods = ['imag_coherence', 'wpli', 'plv', 'pli_bands', 'spectral_entropy'] #'squared_coherence'
+methods = ['wpli']  #'imag_coherence' #'squared_coherence' #'wpli', 'plv', 'plv', 'pli_bands', 
 frequency_bands = ['delta', 'theta', 'alpha', 'beta', 'gamma']
+
 
 os.chdir(clean_directory)
 for freq_method in methods:
     for file in os.listdir(clean_directory):
+        os.chdir(clean_directory)
         if file == 'ipynb_checkpoints':
             pass
         else:
@@ -28,7 +30,9 @@ for freq_method in methods:
             G = eegraph.Graph()
             window = 5
             connectivity_measure = freq_method
-            G.load_data(path = file)
+            G.load_data(path = file, exclude = ['EMG', 'M2'], electrode_montage_path = '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Scripts/Human/Graph/montage.elc')
             graphs, connectivity_matrix = G.modelate(window_size = window, connectivity = connectivity_measure, bands = frequency_bands)
-            np.save(save_directory + freq_method + '/' +  str(file[0:6]) + '_' + str(freq_method) + '.npy', connectivity_matrix)
+            print(connectivity_matrix)
+            os.chdir(save_directory + freq_method)
+            np.save(str(file[0:6]) + '_' + str(freq_method) + '.npy', connectivity_matrix)
             print(file[0:6] + ' saved')

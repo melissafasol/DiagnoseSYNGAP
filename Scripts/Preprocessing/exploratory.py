@@ -85,4 +85,4 @@ class FindNoiseThreshold:
         
         slope_thresh = round(slope_mean.min() - 3*std_slope)
         
-        return all_values_slope, all_values_intcpt, slope_thresh, int_thresh
+        return  slope_thresh, int_thresh

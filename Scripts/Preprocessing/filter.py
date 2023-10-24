@@ -15,7 +15,7 @@ class NoiseFilter:
     order = 3
     sampling_rate = 250.4 
     nyquist = sampling_rate/2
-    low = 0.2/nyquist
+    low = 1/nyquist
     high = 100/nyquist
 
     
@@ -23,7 +23,7 @@ class NoiseFilter:
         self.unfiltered_data = unfiltered_data 
         self.brain_state_file = brain_state_file                        #dataframe with brainstates  
         self.num_epochs = len(brain_state_file)
-        self.channel_variables = channelvariables                      #dictionary with channel types and channel variables 
+        self.channel_variables = channelvariables                       #dictionary with channel types and channel variables 
         self.channel_types= channelvariables['channel_types']
         self.channel_numbers = channelvariables['channel_numbers']
         self.ch_type = ch_type                                          #specify channel type to perform calculations on
@@ -40,13 +40,15 @@ class NoiseFilter:
         if self.ch_type == 'eeg':
             for idx, ch in enumerate(self.channel_types):
                 if ch == 'eeg':
+                    indices.append(idx)
+        if self.ch_type == 'emg':
+            for idx, ch in enumerate(self.channel_types):
+                if ch == 'emg':
                         indices.append(idx)
-            if self.ch_type == 'emg':
-                for idx, ch in enumerate(self.channel_types):
-                    if ch == 'emg':
-                        indices.append(idx)
-            if self.ch_type == 'all':
-                indices = self.channel_numbers
+        if self.ch_type == 'all':
+            indices = self.channel_numbers
+        
+        
         
         #Select all, emg, or eeg channel indices to apply bandpass filter                                    
         selected_channels = self.unfiltered_data[indices, :]     
@@ -88,7 +90,7 @@ class NoiseFilter:
                     for chan in epoch:
                             power= lin_reg_calc(chan)
                             channel_arrays.append(power)
-                    one_epoch_arrays = np.dstack(channel_arrays)
+                    one_epoch_arrays = np.vstack(channel_arrays)
                     if one_epoch_arrays[0][0][2] == 5:
                         noisy_indices.append(idx)
                     else:
