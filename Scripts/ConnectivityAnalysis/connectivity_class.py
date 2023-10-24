@@ -4,6 +4,7 @@ import pandas as pd
 
 from mne_features.bivariate import compute_phase_lock_val, compute_max_cross_corr
 
+#add feature to calculate by frequency band?
 
 def ConnectivityClass():
     
@@ -41,3 +42,6 @@ def ConnectivityClass():
         error_array = np.array(error_ls)
         
         return phase_lock_array, error_array
+    
+    
+    
