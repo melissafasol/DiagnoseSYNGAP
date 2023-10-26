@@ -19,7 +19,7 @@ somatosensory = [0, 6, 9, 13]
 class PowerBands():
     
     
-    def __init__(self, data_array, freq_low, freq_high, fs, nperseg):
+    def __init__(self, freq_low, freq_high, fs, nperseg):
         '''
         freq_low = lower frequency bound e.g 2Hz
         freq_high = higher frequency bound e.g 10Hz
@@ -27,19 +27,18 @@ class PowerBands():
         two_recordings = if false then animal recordings only have one recording but if true then have two
         
         '''
-        self.data_array = data_array
-        self.freq_low = freq_low/0.2
-        self.freq_high = freq_high/0.2
+        self.freq_low = int(freq_low/0.2)
+        self.freq_high = int(freq_high/0.2 + 1)
         self.fs= fs
         self.nperseg = nperseg
         
-    def power_band_calculations(self):
+    def power_band_calculations(self, data_array):
 
         band_power_ls = []
 
-        for epoch in self.data_array:
+        for epoch in data_array:
             freq, power = scipy.signal.welch(epoch, window='hann', fs = self.fs, nperseg = self.nperseg)
-            freq_power = np.mean(power[self.freq_low:self.freq_high + 1])
+            freq_power = np.mean(power[self.freq_low:self.freq_high])
             band_power_ls.append(freq_power)
     
         power_array = np.array(band_power_ls)
