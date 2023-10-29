@@ -12,11 +12,11 @@ from exploratory import FindNoiseThreshold
 from constants import SYNGAP_baseline_start, SYNGAP_baseline_end, channel_variables
 
 directory_path = '/home/melissa/PREPROCESSING/SYNGAP1/numpyformat_baseline'
-results_path = '/home/melissa/RESULTS/XGBoost/SYNGAP1/mne_connectivity/'
+results_path = '/home/melissa/RESULTS/XGBoost/SYNGAP1/mne_connectivity/coh'
 
 frequency_bands = [[1,5], [5, 11], [11, 16], [16, 30], [30, 48]]
 frequency_names = ['delta', 'theta', 'sigma', 'beta', 'gamma']
-connectivity_measure = ['plv', 'pli', 'wpli'] #'coh'
+connectivity_measure = ['coh'] #['plv', 'pli', 'wpli'] #'coh'
 
 SYNGAP_1_ID_ls = [ 'S7088', 'S7092', 'S7094', 'S7098', 'S7068', 'S7074', 'S7076', 'S7071', 'S7075', 'S7101']
 syngap_2_ls =  ['S7091', 'S7070', 'S7072', 'S7083', 'S7063','S7064', 'S7069', 'S7086', 'S7091'] #S7101
