@@ -28,3 +28,5 @@ def weight_threshold_matrix(normalized_matrix):
 
     # Apply the binary mask to the original matrix to create the thresholded matrix
     thresholded_matrix = normalized_matrix * threshold_mask
+    
+    return thresholded_matrix
