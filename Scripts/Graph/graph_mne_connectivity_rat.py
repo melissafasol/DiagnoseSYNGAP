@@ -56,12 +56,11 @@ def wf_closeness_centrality(data_dict):
 
 folder_dir = '/home/melissa/RESULTS/FINAL_MODEL/Rat/MNEConnectivity/'
 noise_dir = '/home/melissa/PREPROCESSING/SYNGAP1/cleaned_br_files/'
+results_dir = '/home/melissa/RESULTS/FINAL_MODEL/Rat/Graph_Theory/'
 
 measures = ['coh', 'plv', 'pli', 'wpli']
 
 for conn_measure in measures:
-    print(conn_measure)
-    frequency_ls = []
     for freq_band in frequencies:
         animal_ls = []
         for animal in analysis_ls:
@@ -135,7 +134,5 @@ for conn_measure in measures:
                 indices_concat = pd.concat(clean_values_ls)
                 animal_ls.append(indices_concat)
         all_freq_concat = pd.concat(animal_ls)
-        print(all_freq_concat)
-        break
-            
-            
+        all_freq_concat.to_csv(results_dir + conn_measure + '/' + conn_measure + '_' + freq_band + '.npy')
+        print('all animals saved for ' + print(freq_band))
