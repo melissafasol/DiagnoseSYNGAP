@@ -6,7 +6,7 @@ from mne_features.bivariate import compute_phase_lock_val, compute_max_cross_cor
 
 #add feature to calculate by frequency band?
 
-def ConnectivityClass():
+class ConnectivityClass:
     
     def __init__(self, filtered_data):
         self.filtered_data = filtered_data

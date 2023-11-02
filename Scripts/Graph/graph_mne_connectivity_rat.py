@@ -62,8 +62,10 @@ measures = ['coh', 'plv', 'pli', 'wpli']
 
 for conn_measure in measures:
     for freq_band in frequencies:
+        print(freq_band)
         animal_ls = []
         for animal in analysis_ls:
+            print(animal)
             if animal in syngap_2_ls:
                 conn_file = np.load(folder_dir + conn_measure + '/' + animal + '_' + conn_measure + '_' + freq_band + '.npy')
                 all_indices = np.arange(0, 34560, 1)
@@ -89,13 +91,13 @@ for conn_measure in measures:
                         mean_soma, mean_motor, mean_visual = wf_closeness_centrality(wf_closeness)
                         graph_dict = {'Idx': [idx], 
                                       'Animal_ID': [animal],
-                                      'transitivity_' + freq_band + '_' + conn_measure: [transitivity],
+                                      'Transitivity_' + freq_band + '_' + conn_measure: [transitivity],
                                       'glob_eff_' + freq_band + '_' + conn_measure: [glob_eff],
                                       'avg_clust_coeff_' + freq_band + '_' +  conn_measure: [avg_clust_coeff],
                                       'modularity_' + freq_band + '_' + conn_measure: [modularity],
-                                      'soma_wf_close_' + freq_band + '_' + conn_measure: [mean_soma],
-                                      'motor_wf_close_' + freq_band + '_' + conn_measure: [mean_motor],
-                                      'visual_wf_close_' + freq_band + '_' + conn_measure: [mean_visual]}
+                                      'soma_wf_close_' + freq_band + '_' + conn_measure: mean_soma,
+                                      'motor_wf_close_' + freq_band + '_' + conn_measure: mean_motor,
+                                      'visual_wf_close_' + freq_band + '_' + conn_measure: mean_visual}
                         graph_df = pd.DataFrame(data = graph_dict)
                         clean_values_ls.append(graph_df)
                 indices_concat = pd.concat(clean_values_ls)
@@ -126,13 +128,13 @@ for conn_measure in measures:
                                       'glob_eff_' + freq_band + '_' + conn_measure: [glob_eff],
                                       'avg_clust_coeff_' + freq_band + '_' +  conn_measure: [avg_clust_coeff],
                                       'modularity_' + freq_band + '_' + conn_measure: [modularity],
-                                      'soma_wf_close_' + freq_band + '_' + conn_measure: [mean_soma],
-                                      'motor_wf_close_' + freq_band + '_' + conn_measure: [mean_motor],
-                                      'visual_wf_close_' + freq_band + '_' + conn_measure: [mean_visual]}
+                                      'soma_wf_close_' + freq_band + '_' + conn_measure: mean_soma,
+                                      'motor_wf_close_' + freq_band + '_' + conn_measure: mean_motor,
+                                      'visual_wf_close_' + freq_band + '_' + conn_measure: mean_visual}
                         graph_df = pd.DataFrame(data = graph_dict)
                         clean_values_ls.append(graph_df)
                 indices_concat = pd.concat(clean_values_ls)
                 animal_ls.append(indices_concat)
         all_freq_concat = pd.concat(animal_ls)
-        all_freq_concat.to_csv(results_dir + conn_measure + '/' + conn_measure + '_' + freq_band + '.npy')
-        print('all animals saved for ' + print(freq_band))
+        all_freq_concat.to_csv(results_dir + conn_measure + '/' + conn_measure + '_' + freq_band + '.csv')
+        print('all animals saved for ' + str(freq_band))

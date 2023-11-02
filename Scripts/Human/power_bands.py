@@ -26,10 +26,10 @@ patient_list  = [ 'P27 N1']
 
 
 #indices for frequency bands
-# delta [15:61]
-# theta [120: 211]
-# alpha [140: 361]
-# beta [450: 901]
+# delta [15:61] [1:4]
+# theta [120: 211] [4:8]
+# alpha [140: 361] [8:12]
+# beta [450: 901] [13:30]
 
 
 for patient in patient_list:

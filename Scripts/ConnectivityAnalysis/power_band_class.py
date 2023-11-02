@@ -93,3 +93,8 @@ class PowerBands():
         
         return motor_mean, visual_mean, soma_mean
     
+    def power_band_human(self, epoch):
+
+        freq, power = scipy.signal.welch(epoch, window='hann', fs = self.fs, nperseg = self.nperseg)
+        
+        return freq, power

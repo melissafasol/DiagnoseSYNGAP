@@ -11,7 +11,7 @@ import signal
 
 def load_filtered_data(file_path, file_name):
     os.chdir(file_path)
-    raw_edf = mne.io.read_raw_edf(str(file_name), eog = [0],
+    raw_edf = mne.io.read_raw_edf(str(file_name),
             exclude = ['F3:M2', 'C3:M2', 'O1:M2', 'Position', 'PLM1', 'PLM2',
                        'Snore', 'Flow', 'Effort', 'Thorax', 'Abdomen', 'SpO2', 'Pleth', 'Pulse',
                       'E1:M2', 'E2:M2', 'EMG', 'M2'], preload=True)

@@ -1,6 +1,5 @@
 import os 
 import sys
-
 import numpy as np 
 import pandas as pd 
 import scipy 
@@ -9,18 +8,6 @@ import mne
 
 from mne_features.univariate import compute_higuchi_fd, compute_hurst_exp
 
-sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Scripts/Preprocessing')
-from load_files import LoadFiles
-from filter import NoiseFilter, HarmonicsFilter, remove_seizure_epochs
-from exploratory import FindNoiseThreshold
-#from constants import start_time_GRIN2B_baseline, end_time_GRIN2B_baseline, GRIN_het_IDs, GRIN2B_ID_list, GRIN2B_seiz_free_IDs, channel_variables, GRIN_wt_IDs
-from constants import SYNGAP_baseline_start, SYNGAP_baseline_end, channel_variables
-
-directory_path = '/home/melissa/PREPROCESSING/SYNGAP1/numpyformat_baseline'
-results_path = '/home/melissa/RESULTS/XGBoost/SYNGAP1/Somatosensory/HFD'
-
-import os
-import numpy as np
 
 class ComplexClass:
     
@@ -65,7 +52,7 @@ class ComplexClass:
         complexity_array = np.concatenate((mean_array_1, mean_array_2), axis=0)
         return complexity_array
     
-    def one_recordings(self, bandpass_filtered_data_1, region):
+    def one_recording(self, bandpass_filtered_data_1, region):
         
         region_ls_1 = []
         

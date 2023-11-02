@@ -135,25 +135,6 @@ def prepare_df_one_datafile(ids_1_ls, br_directory, SYNGAP_het, SYNGAP_wt):
         else:
             pass
         
-        
-        #print(len(br_state))
-        #print(len(motor_hfd_avg))
-        #print(len(motor_hurst_avg))
-        #print(len(motor_dispen))
-        #print(len(motor_gamma))
-        #print(len(soma_hfd_avg))
-        #print(len(soma_hurst_avg))
-        #print(len(soma_dispen))
-        #print(len(soma_gamma))
-        #print(len(vis_phase_lock_right))
-
-         #clean arrays
-        #clean_offset = np.delete(fooof_offset_nan, nan_indices)
-        #clean_exponent = np.delete(fooof_exponent_nan, nan_indices)
-        #clean_dispen = np.delete(dispen, nan_indices)
-        #clean_gamma = np.delete(gamma, nan_indices)
-        #clean_br_state = np.delete(br_state, nan_indices)
-
 
         if animal in SYNGAP_het:
             genotype = 1

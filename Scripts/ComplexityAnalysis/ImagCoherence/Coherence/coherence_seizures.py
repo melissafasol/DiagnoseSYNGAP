@@ -1,3 +1,5 @@
+'''Coherence preprocessing for Jorge's code'''
+
 import os 
 import sys
 import numpy as np 

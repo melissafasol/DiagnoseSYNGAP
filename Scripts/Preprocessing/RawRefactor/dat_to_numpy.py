@@ -47,3 +47,5 @@ for animal in animal_ID_list:
     print(dat_recording[0])
     convert_dat_to_npy(filename = dat_recording[0], path_to_folder= path_to_folder, path_to_save_folder=path_to_save_folder, sample_rate=1000,
     number_electrodes=16, save_as_name = animal + '_GRIN2B')
+    
+    

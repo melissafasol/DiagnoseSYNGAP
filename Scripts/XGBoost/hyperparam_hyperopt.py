@@ -61,7 +61,6 @@ def hyperparameter_tuning(space: Dict[str, Union[float, int]],
     
     score = metrics.roc_auc_score(y_test, model.predict(X_test))
     return {'loss': -score, 'status': STATUS_OK, 'model': model}
-    
 
 
 options = {'max_depth': hp.quniform('max_depth', 1, 8, 1), #tree
@@ -74,36 +73,5 @@ options = {'max_depth': hp.quniform('max_depth', 1, 8, 1), #tree
             'learning_rate': hp.loguniform('learning_rate', -7, 0), 
             'random_state': 42
           }
-
-
-#function to explore the trials object
-
-def trial2df(trial: Sequence[Dict[str, Any]]) -> pd.DataFrame:
-    
-    """Convert a Trial object (sequence of trial dictionaries) to 
-    a Pandas DataFrame.
-    
-    Parameters
-    ----------
-    trial: List[Dict[str, Any]]
-        A list of trial dictionaries 
-    
-    Returns: 
-    pd.DataFrame 
-        A DataFrame with columns for the loss, trial id, and values
-        from each trial recording """
-        
-    vals = []
-    for t in trial: 
-        result = t['result']
-        misc = t['misc']
-        val = {k: v[0] if isinstance (v, list) else v 
-               for k, v in misc['vals'].items()
-               }
-        val['loss'] = result['loss']
-        val['tid'] = t['tid']
-        vals.append(val)
-        
-    return pd.DataFrame(vals)
 
 

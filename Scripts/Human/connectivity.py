@@ -14,12 +14,11 @@ frequency_bands = [[1,4], [4, 8], [8, 12], [13, 30]]
 frequency_names = ['delta', 'theta', 'sigma', 'beta']
 connectivity_measure = ['coh', 'plv', 'pli', 'wpli']
 
-patient_list  =  ['P23 N2', 'P23 N3', 'P21 N3', 'P1 N1', 'P2 N1', 'P2 N2', 'P3 N1', 
-                'P3 N2', 'P4 N1', 'P4 N2', 'P5 N1','P6 N1', 'P6 N2', 'P7 N1', 'P7 N2',
-                'P8 N1',  'P10 N1', 'P11 N1', 'P15 N1', 'P16 N1', 'P17 N1', 'P18 N1',
-                'P20 N1', 'P21 N1', 'P21 N2', 'P22 N1', 'P23 N1', 'P24 N1','P27 N1',
-                 'P28 N1', 'P28 N2', 'P29 N2', 'P30 N1']
-
+patient_list  =  ['P1 N1', 'P2 N1', 'P2 N2', 'P3 N1', 'P3 N2', 'P4 N1', 'P4 N2', 'P5 N1',
+                  'P6 N1', 'P6 N2', 'P7 N1', 'P7 N2','P8 N1','P10 N1', 'P11 N1', 'P15 N1',
+                  'P16 N1', 'P17 N1', 'P18 N1','P20 N1', 'P21 N1', 'P21 N2', 'P21 N3',
+                  'P22 N1','P23 N1', 'P23 N2', 'P23 N3', 'P24 N1','P27 N1','P28 N1',
+                  'P28 N2', 'P29 N2', 'P30 N1']  
 
 for patient in patient_list:
     print(patient)
