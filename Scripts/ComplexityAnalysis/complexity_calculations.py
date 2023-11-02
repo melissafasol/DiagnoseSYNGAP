@@ -32,10 +32,12 @@ syngap_2_ls =  ['S7091', 'S7070', 'S7072', 'S7083', 'S7063','S7064', 'S7069', 'S
 analysis_ls = [ 'S7088', 'S7092', 'S7094', 'S7098', 'S7068', 'S7074', 'S7076', 'S7071', 'S7075', 'S7101',
                'S7091', 'S7070', 'S7072', 'S7083', 'S7063','S7064', 'S7069', 'S7086']
 
-complex_calculation_types = ['hfd', 'hurst']
+analysis_ls_miss = ['S7063', 'S7064', 'S7069', 'S7088','S7086']
+
+complex_calculation_types = ['hurst'] #hfd
 
 for complx in complex_calculation_types:
-    for animal in analysis_ls:
+    for animal in analysis_ls_miss:
         print('motor one starting')
         print('loading ' + str(animal))
         animal = str(animal)
