@@ -114,3 +114,37 @@ def generate_3d_data(emg_array, eeg_array, noise_indices):
     return all_epochs #all_epochs #standardized_epochs
 
 
+def calculate_spectral_features(animal_id, sleep_score_values, emg_array, eeg_array):
+    
+    '''calculate features to feed into GMM'''
+    
+    indices = np.arange(0, 17281, 1)
+    
+    array_3D_ls = []
+    
+    for idx, eeg_epoch, emg_epoch, sleep_score in zip(indices, eeg_array, emg_array, sleep_score_values):
+        freq, power_eeg = scipy.signal.welch(eeg_epoch, window='hann', fs=250.4, nperseg=1252)
+        slope, intercept = np.polyfit(freq, power_eeg, 1)
+        if slope < -8:
+            pass
+        else:
+            freq, power_emg = scipy.signal.welch(emg_epoch, window='hann', fs=250.4, nperseg=1252)
+            num_coefficients = 21
+            freq_theta = power_eeg[29:42]
+            smoothed_theta_power = np.max(np.log(np.convolve(freq_theta, np.ones(num_coefficients)/num_coefficients, mode='same')))
+            
+            gamma_eeg = np.mean(np.log(power_eeg[150:240]))
+            freq_eeg = np.mean(np.log(power_eeg[5:101]))
+            freq_emg = np.mean(np.log(power_emg[300:451]))
+            
+            data_dict = {'SleepScore': [sleep_score], 'Animal': [animal_id], 'Theta': [smoothed_theta_power],
+                        'overall_eeg': [freq_eeg], 'overall_emg': [freq_emg], 'Gamma': [gamma_eeg],
+                        'Slope': [slope]}
+            data_df = pd.DataFrame(data = data_dict)
+            
+            
+            array_3D_ls.append(data_df)
+    
+    all_epochs = pd.concat(array_3D_ls)
+    
+    return all_epochs
