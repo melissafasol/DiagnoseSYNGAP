@@ -7,3 +7,4 @@ Scripts/XGBoost/__pycache__/
 Scripts/Human/.gitignore
 Scripts/Graph/__pycache__/
 Scripts/ComplexityAnalysis/__pycache__/
+Scripts/ConnectivityAnalysis/__pycache__/
