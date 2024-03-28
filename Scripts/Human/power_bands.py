@@ -12,10 +12,10 @@ from mne_features.univariate import compute_higuchi_fd, compute_hurst_exp
 from preprocess_human import load_filtered_data, split_into_epochs, select_clean_indices
 
 human_data_folder = '/home/melissa/PREPROCESSING/SYNGAP1/SYNGAP1_Human_Data'
-results_path = '/home/melissa/RESULTS/XGBoost/Human_SYNGAP1/Delta_Power/'
+results_path = '/home/melissa/RESULTS/XGBoost/Human_SYNGAP1/Theta_Power/'
 noise_directory = '/home/melissa/PREPROCESSING/SYNGAP1/human_npy/harmonic_idx/'
 
-patient_list  = [ 'P27 N1']
+patient_list  = [ 'P8 N1'] #, 'P6 N2']
     
     #'P23 N2', 'P23 N3', 'P21 N3'
 
@@ -45,7 +45,7 @@ for patient in patient_list:
         power_ls = []
         for clean_idx in clean_indices:
             power_calculations = scipy.signal.welch(epochs[clean_idx][chan], window = 'hann', fs = 256, nperseg = 7680)
-            avg_power = np.mean(power_calculations[1][15:61])
+            avg_power = np.mean(power_calculations[1][120:211])
             power_ls.append(avg_power)
 
         power_array = np.array(power_ls)

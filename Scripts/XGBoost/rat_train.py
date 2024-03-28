@@ -24,7 +24,7 @@ all_animals = pd.read_csv('/home/melissa/RESULTS/FINAL_MODEL/Rat/all_measures_xg
 all_animals.drop(['Unnamed: 0'], axis = 1, inplace = True)
 
 wt_ids = ['S7068', 'S7070', 'S7071', 'S7074', 'S7086', 'S7091', 'S7098', 'S7101'] #'S7087',
-gap_ids = ['S7063', 'S7064', 'S7069', 'S7072', 'S7075', 'S7076', 'S7088', 'S7092', 'S7094', 'S7096']
+gap_ids = ['S7063', 'S7064', 'S7069', 'S7072', 'S7075', 'S7076', 'S7088', 'S7092', 'S7094',  'S7096']
 
 def determine_genotype(animal_id, wt_ids, gap_ids):
     if animal_id in wt_ids:
@@ -42,15 +42,40 @@ cols = all_animals.columns.tolist()
 cols.insert(0, cols.pop(cols.index('Genotype')))
 all_animals = all_animals[cols]
 
+accepted = ['Genotype', 'Animal_ID', 'Idx', 'Mot_CC_Gamma', 'Somatosensory_coh_gamma', 'Vis_CC_Beta', 
+'Somatosensory_plv_theta', 'Visual_plv_beta', 'Visual_plv_sigma',
+'Mot_CC_Beta', 'Som_CC_Gamma', 'Vis_Mot_pli_sigma', 'Vis_Mot_wpli_sigma',
+'Visual_wpli_sigma', 'Vis_Mot_coh_beta', 'Somatosensory_coh_beta',
+'Vis_Soma_plv_sigma', 'Somatosensory_wpli_beta', 'Vis_CC_Theta',
+'Som_CC_Sigma', 'Soma_Motor_pli_beta', 'Som_CC_Beta', 'Visual_coh_beta',
+'Visual_coh_gamma', 'Mot_Disp', 'Soma_Motor_pli_gamma', 'Somatosensory_wpli_gamma',
+'Vis_Mot_plv_gamma', 'Somatosensory_pli_beta', 'Soma_Motor_coh_gamma', 'Motor_wpli_gamma',
+'Somatosensory_plv_gamma', 'Soma_Motor_plv_beta', 'Somatosensory_plv_delta',
+'Visual_plv_gamma', 'Mot_CC_Delta', 'Som_CC_Theta', 'Somatosensory_coh_theta',
+'Vis_Mot_pli_gamma', 'Vis_Soma_pli_gamma', 'Vis_Mot_plv_sigma', 'Vis_Soma_plv_theta',
+'Motor_wpli_theta', 'Vis_Soma_coh_delta', 'Vis_Soma_plv_gamma', 'Motor_pli_beta',
+'Visual_pli_sigma', 'Vis_Soma_plv_delta', 'Motor_pli_theta', 'Vis_CC_Gamma',
+'Soma_Motor_plv_gamma', 'Vis_Mot_coh_theta', 'Vis_Soma_coh_theta', 'Motor_coh_gamma',
+'Som_Disp', 'Somatosensory_coh_sigma', 'Mot_HFD', 'Vis_Soma_coh_beta', 'Visual_coh_sigma',
+'Somatosensory_plv_sigma', 'Mot_CC_Theta', 'Somatosensory_pli_gamma', 'Vis_Soma_plv_beta',
+'Visual_pli_gamma', 'Vis_CC_Sigma', 'Vis_Mot_coh_gamma', 'Vis_Disp', 'Soma_Motor_coh_beta',
+'Som_Hurst', 'Vis_Hurst', 'Vis_Mot_pli_beta', 'Vis_Mot_pli_theta', 'Som_HFD', 'Motor_pli_sigma',
+'Vis_Soma_coh_gamma', 'Vis_Soma_coh_sigma', 'Vis_CC_Delta', 'Vis_Mot_plv_theta', 'Som_CC_Delta',
+'Motor_plv_gamma', 'Vis_HFD', 'Somatosensory_plv_beta', 'Mot_Hurst', 'Motor_pli_gamma',
+'Vis_Mot_plv_beta']
+
+selected_columns = all_animals[accepted]
+
 # Combine the two lists and create a list of labels (0 for human_wt and 1 for human_gap)
-all_ids = np.unique(all_animals['Animal_ID'].to_list())
+all_ids = np.unique(selected_columns['Animal_ID'].to_list())
 labels = [0] * len(wt_ids) + [1] * len(gap_ids)
 
 # Split the combined list into training and test sets, stratifying by the labels
-train_ids, test_ids,_, _ = train_test_split(all_ids, labels, test_size=0.3, stratify=labels, random_state=42)
+train_ids, test_ids,_, _ = train_test_split(all_ids, labels, test_size=0.3, stratify=labels, random_state=10)
 
-X_train = all_animals[all_animals["Animal_ID"].isin(train_ids)]
-X_test = all_animals[all_animals["Animal_ID"].isin(test_ids)]
+X_train = selected_columns[selected_columns["Animal_ID"].isin(train_ids)]
+X_test = selected_columns[selected_columns["Animal_ID"].isin(test_ids)]
+
 
 group_by_patient_id = X_train.groupby(['Animal_ID'])
 groups_by_patient_id_list = np.array(X_train['Animal_ID'].values)
@@ -73,11 +98,11 @@ options = {
     'scale_pos_weight': hp.uniform('scale_pos_weight', 1, 100),
     'max_delta_step': hp.quniform('max_delta_step', 0, 10, 1),
     'tree_method': 'exact', 
-    'sample_type': hp.choice('sample_type', ['uniform', 'weighted']),
-    'normalize_type': hp.choice('normalize_type', ['tree', 'forest']),
-    'rate_drop': hp.uniform('rate_drop', 0, 1),
-    'skip_drop': hp.uniform('skip_drop', 0, 1),
-    'random_state': 42
+    #'sample_type': hp.choice('sample_type', ['uniform', 'weighted']),
+    #'normalize_type': hp.choice('normalize_type', ['tree', 'forest']),
+    #'rate_drop': hp.uniform('rate_drop', 0, 1),
+    #'skip_drop': hp.uniform('skip_drop', 0, 1),
+    'random_state': 9
 }
 
 def hyperparameter_tuning(space, X, y, n_splits=3):
@@ -93,7 +118,7 @@ def hyperparameter_tuning(space, X, y, n_splits=3):
         X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
         y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
         
-        model = xgb.XGBClassifier(booster = 'dart', **space)
+        model = xgb.XGBClassifier( **space)
         model.fit(X_train, y_train)
 
         # Predict probabilities for the positive class (usually column index 1)

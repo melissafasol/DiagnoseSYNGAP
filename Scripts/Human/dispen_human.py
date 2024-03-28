@@ -28,8 +28,8 @@ def calculate_dispen(data_input, patient_id, channel_list, clean_indices, result
     for clean_idx in clean_indices:
         all_channels = []
         for chan_idx, channel in enumerate(channel_list):
-            dispen_value_chan = EH.DispEn(Sig = np.array(data_input[clean_idx][chan_idx, :]), m=3, tau=2, c=4, Typex='ncdf')
-            dispen_dict = {str(channel) + '_dispen': dispen_value_chan}
+            Dispx, RDE = EH.DispEn(Sig = np.array(data_input[clean_idx][chan_idx, :]), m=3, tau=2, c=4, Typex='ncdf')
+            dispen_dict = {str(channel) + '_dispen': Dispx}
             dispen_df = pd.DataFrame(data = dispen_dict)
             all_channels.append(dispen_df)
         dispen_idx = pd.concat(all_channels, axis = 1)

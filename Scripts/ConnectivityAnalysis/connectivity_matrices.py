@@ -35,10 +35,10 @@ os.chdir('/home/melissa/PREPROCESSING/SYNGAP1/cleaned_br_files/')
 
 info = mne.create_info(ch_names= channel_names, sfreq=250.4, ch_types='eeg')
 
-frequency_range =  [30, 48] # [1,5] 
-frequency_band =  'gamma' #'delta'
+frequency_range =  [10, 16] # [1,5] 
+frequency_band =  'sigma' #'delta'
 
-data_results_path = '/home/melissa/RESULTS/SYNGAP1/Thesis/wpli/' + str(frequency_band) + '/'
+data_results_path = '/home/melissa/RESULTS/SYNGAP1/Thesis/plv/' + str(frequency_band) + '/'
 
 for animal in analysis_ls:
         print(animal)
@@ -64,7 +64,7 @@ for animal in analysis_ls:
             if len(br_file.loc[br_file['brainstate'].isin([4])]) > 0:
                 seizure_indices = br_file.loc[br_file['brainstate'].isin([4])].index.to_list()
                 seizure_epochs = tr_filter_1[seizure_indices]
-                seiz_con = mne_connectivity.spectral_connectivity_time(seizure_epochs,method='wpli', sfreq=250.4,
+                seiz_con = mne_connectivity.spectral_connectivity_time(seizure_epochs,method='plv', sfreq=250.4,
                                                               freqs = frequency_range, n_cycles = 3, 
                                                               sm_kernel = 'hanning',average=True,
                                                               faverage = True, n_jobs=1)
@@ -77,7 +77,7 @@ for animal in analysis_ls:
                 pass
         
             all_epochs = tr_filter_1[all_indices]
-            all_epochs_con = mne_connectivity.spectral_connectivity_time(all_epochs,method='wpli', sfreq=250.4,
+            all_epochs_con = mne_connectivity.spectral_connectivity_time(all_epochs,method='plv', sfreq=250.4,
                                                               freqs = frequency_range, n_cycles = 3, 
                                                               sm_kernel = 'hanning',average=True,
                                                               faverage = True, n_jobs=1)
@@ -89,7 +89,7 @@ for animal in analysis_ls:
             
             
             wake_epochs = tr_filter_1[wake_indices]
-            wake_epochs_con = mne_connectivity.spectral_connectivity_time(wake_epochs,method='wpli', sfreq=250.4,
+            wake_epochs_con = mne_connectivity.spectral_connectivity_time(wake_epochs,method='plv', sfreq=250.4,
                                                               freqs = frequency_range, n_cycles = 3, 
                                                               sm_kernel = 'hanning',average=True,
                                                               faverage = True, n_jobs=1)
@@ -103,7 +103,7 @@ for animal in analysis_ls:
             
             nrem_epochs = tr_filter_1[nrem_indices]
             
-            nrem_epochs_con = mne_connectivity.spectral_connectivity_time(nrem_epochs,method='wpli', sfreq=250.4,
+            nrem_epochs_con = mne_connectivity.spectral_connectivity_time(nrem_epochs,method='plv', sfreq=250.4,
                                                               freqs = frequency_range, n_cycles = 3, 
                                                               sm_kernel = 'hanning',average=True,
                                                               faverage = True, n_jobs=1)
@@ -116,7 +116,7 @@ for animal in analysis_ls:
             
             rem_epochs = tr_filter_1[rem_indices]
             
-            rem_epochs_con = mne_connectivity.spectral_connectivity_time(rem_epochs,method='wpli', sfreq=250.4,
+            rem_epochs_con = mne_connectivity.spectral_connectivity_time(rem_epochs,method='plv', sfreq=250.4,
                                                               freqs = frequency_range, n_cycles = 3, 
                                                               sm_kernel = 'hanning',average=True,
                                                               faverage = True, n_jobs=1)

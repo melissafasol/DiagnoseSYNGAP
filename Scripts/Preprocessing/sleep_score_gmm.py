@@ -75,43 +75,74 @@ def extract_sleep_stages(file_path, file_name, column_name):
     return vis_score
 
 
-def generate_3d_data(emg_array, eeg_array, noise_indices):
-    
-    '''calculate features to feed into GMM'''
-    
-    indices = np.arange(0, 17280, 1)
+#def generate_3d_data(emg_array, eeg_array, noise_indices):
+#    
+#    '''calculate features to feed into GMM'''
+#    
+#    indices = np.arange(0, 17280, 1)
+#    
+#    array_3D_ls = []
+#    
+#    for idx, eeg_epoch, emg_epoch in zip(indices, eeg_array, emg_array):
+#        if idx in noise_indices:
+#            pass
+#        else:
+#            try:
+#                epoch_data_ls = []
+#                freq, power_emg = scipy.signal.welch(emg_epoch, window='hann', fs=250.4, nperseg=1252)
+#                freq, power_eeg = scipy.signal.welch(eeg_epoch, window='hann', fs=250.4, nperseg=1252)
+#                slope, intercept = np.polyfit(freq, power_eeg, 1)
+#                smoothed_theta_power = np.max(np.log(np.convolve(freq_theta, np.ones(num_coefficients)/num_coefficients, mode='same')))
+#
+#                #gamma_slope, gamma_intercept = np.polyfit(freq[150:241], power_eeg[150:241], 1)
+#
+#                #epoch_data_ls.append(gamma_slope)
+#                epoch_data_ls.append(slope)
+#                array_3D_ls.append(epoch_data_ls)
+#            except:
+#                print(idx)
+#    
+#    all_epochs = np.array(array_3D_ls)
+#    
+#    
+#    return all_epochs #all_epochs #standardized_epochs
+
+def generate_3d_data(emg_array, eeg_array, theta_band=(4, 8), num_coefficients=10):
+    """
+    Calculate features to feed into GMM.
+    """
+    indices = np.arange(len(eeg_array))  # Assuming eeg_array's length matches the required range
     
     array_3D_ls = []
     
-    for idx, eeg_epoch, emg_epoch in zip(indices, eeg_array, emg_array):
-        if idx in noise_indices:
-            pass
-        else:
-            try:
-                epoch_data_ls = []
-                freq, power_emg = scipy.signal.welch(emg_epoch, window='hann', fs=250.4, nperseg=1252)
-                freq, power_eeg = scipy.signal.welch(eeg_epoch, window='hann', fs=250.4, nperseg=1252)
-                slope, intercept = np.polyfit(freq, power_eeg, 1)
-                #smoothed_theta_power = np.max(np.log(np.convolve(freq_theta, np.ones(num_coefficients)/num_coefficients, mode='same')))
+    for idx, (eeg_epoch, emg_epoch) in enumerate(zip(eeg_array, emg_array)):
+        #if idx in noise_indices:
+        #    continue  # Skip noisy indices
 
-                gamma_slope, gamma_intercept = np.polyfit(freq[150:241], power_eeg[150:241], 1)
+        try:
+            # Calculate power spectrum for EMG
+            freq_emg, power_emg = scipy.signal.welch(emg_epoch, fs=250.4, window='hann', nperseg=1252)
+            # EMG feature: peak power frequency
+            power_emg_avg = power_emg[300:450]
 
-                epoch_data_ls.append(gamma_slope)
-                epoch_data_ls.append(slope)
-                array_3D_ls.append(epoch_data_ls)
-            except:
-                print(idx)
-    
+            # Calculate power spectrum for EEG
+            freq_eeg, power_eeg = scipy.signal.welch(eeg_epoch, fs=250.4, window='hann', nperseg=1252)
+            power_eeg_avg = power_eeg[5:100]
+            # EEG feature: slope of the power spectrum
+
+            # Theta power calculation
+            theta_mask = (freq_eeg >= theta_band[0]) & (freq_eeg <= theta_band[1])
+            smoothed_theta_power = np.mean(np.log(power_eeg[theta_mask]))  # Mean log power in theta band
+
+            # Create a 3D data point
+            epoch_data_ls = [power_eeg_avg, power_emg_avg, smoothed_theta_power]
+            array_3D_ls.append(epoch_data_ls)
+
+        except Exception as e:
+            print(f"Error at index {idx}: {e}")
+
     all_epochs = np.array(array_3D_ls)
-    
-
-    # Initialize the StandardScaler
-    #scaler = StandardScaler()
-
-    # Fit the scaler to your data and transform it
-    #standardized_epochs = scaler.fit_transform(all_epochs)
-    
-    return all_epochs #all_epochs #standardized_epochs
+    return all_epochs
 
 
 def calculate_spectral_features(animal_id, sleep_score_values, emg_array, eeg_array):
@@ -124,21 +155,23 @@ def calculate_spectral_features(animal_id, sleep_score_values, emg_array, eeg_ar
     
     for idx, eeg_epoch, emg_epoch, sleep_score in zip(indices, eeg_array, emg_array, sleep_score_values):
         freq, power_eeg = scipy.signal.welch(eeg_epoch, window='hann', fs=250.4, nperseg=1252)
-        slope, intercept = np.polyfit(freq, power_eeg, 1)
+        freq, power_emg = scipy.signal.welch(emg_epoch, window='hann', fs=250.4, nperseg=1252)
+        slope, intercept = np.polyfit(freq[5:100], power_eeg[5:100], 1)
         if slope < -8:
             pass
         else:
-            freq, power_emg = scipy.signal.welch(emg_epoch, window='hann', fs=250.4, nperseg=1252)
-            num_coefficients = 21
-            freq_theta = power_eeg[29:42]
-            smoothed_theta_power = np.max(np.log(np.convolve(freq_theta, np.ones(num_coefficients)/num_coefficients, mode='same')))
             
-            gamma_eeg = np.mean(np.log(power_eeg[150:240]))
-            freq_eeg = np.mean(np.log(power_eeg[5:101]))
-            freq_emg = np.mean(np.log(power_emg[300:451]))
-            
-            data_dict = {'SleepScore': [sleep_score], 'Animal': [animal_id], 'Theta': [smoothed_theta_power],
-                        'overall_eeg': [freq_eeg], 'overall_emg': [freq_emg], 'Gamma': [gamma_eeg],
+            theta_band = power_eeg[25:50] #5 - 10
+            freq_theta = np.max(np.log(theta_band + 1e-8))
+
+            full_band_eeg = power_eeg[5:100] #1 - 20Hz
+            freq_eeg = np.mean(np.log(full_band_eeg + 1e-8))
+
+            full_band_emg = power_emg[300:450] #60 - 90
+            freq_emg = np.mean(np.log(full_band_emg + 1e-8))
+
+            data_dict = {'SleepScore': [sleep_score], 'Animal': [animal_id], 'Theta': [freq_theta],
+                        'overall_eeg': [freq_eeg], 'overall_emg': [freq_emg],
                         'Slope': [slope]}
             data_df = pd.DataFrame(data = data_dict)
             

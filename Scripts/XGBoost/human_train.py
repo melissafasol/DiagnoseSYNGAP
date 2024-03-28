@@ -38,6 +38,26 @@ hfd_mne = '/home/melissa/RESULTS/FINAL_MODEL/Human/Complexity/hfd_df/'
 hurst_mne = '/home/melissa/RESULTS/FINAL_MODEL/Human/Complexity/hurst_df/'
 disp_mne = '/home/melissa/RESULTS/FINAL_MODEL/Human/Complexity/DispEn_DF/'
 
+delta_plv_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/plv/delta/'
+theta_plv_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/plv/theta/'
+sigma_plv_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/plv/sigma/'
+beta_plv_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/plv/beta/'
+
+delta_pli_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/pli/delta/'
+theta_pli_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/pli/theta/'
+sigma_pli_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/pli/sigma/'
+beta_pli_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/pli/beta/'
+
+delta_wpli_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/wpli/delta/'
+theta_wpli_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/wpli/theta/'
+sigma_wpli_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/wpli/sigma/'
+beta_wpli_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/wpli/beta/'
+
+delta_coh_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/coh/delta/'
+theta_coh_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/coh/theta/'
+sigma_coh_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/coh/sigma/'
+beta_coh_graph_dir = '/home/melissa/RESULTS/FINAL_MODEL/Human/Graph_Theory/coh/beta/' 
+
 all_dataframes = []
 
 for patient in patient_list:
@@ -47,17 +67,39 @@ for patient in patient_list:
     hurst_df = pd.read_csv(hurst_mne + str(patient) + '_hurst.csv')
     disp_df = pd.read_csv(disp_mne + str(patient) + '_dispen.csv')
     
+    delta_plv = pd.read_csv(delta_plv_graph_dir + str(patient) + '_delta_graph_theory.csv' )
+    theta_plv = pd.read_csv(theta_plv_graph_dir + str(patient) + '_theta_graph_theory.csv' )
+    sigma_plv = pd.read_csv(sigma_plv_graph_dir + str(patient) + '_sigma_graph_theory.csv' )
+    beta_plv  = pd.read_csv(beta_plv_graph_dir + str(patient) + '_beta_graph_theory.csv' )
+    
+    delta_pli = pd.read_csv(delta_pli_graph_dir + str(patient) + '_delta_graph_theory.csv' )
+    theta_pli = pd.read_csv(theta_pli_graph_dir + str(patient) + '_theta_graph_theory.csv' )
+    sigma_pli = pd.read_csv(sigma_pli_graph_dir + str(patient) + '_sigma_graph_theory.csv' )
+    beta_pli  = pd.read_csv(beta_pli_graph_dir + str(patient) + '_beta_graph_theory.csv' )
+    
+    delta_wpli = pd.read_csv(delta_wpli_graph_dir + str(patient) + '_delta_graph_theory.csv' )
+    theta_wpli = pd.read_csv(theta_wpli_graph_dir + str(patient) + '_theta_graph_theory.csv' )
+    sigma_wpli = pd.read_csv(sigma_wpli_graph_dir + str(patient) + '_sigma_graph_theory.csv' )
+    beta_wpli  = pd.read_csv(beta_wpli_graph_dir + str(patient) + '_beta_graph_theory.csv' )
+    
+    delta_coh = pd.read_csv(delta_coh_graph_dir + str(patient) + '_delta_graph_theory.csv' )
+    theta_coh = pd.read_csv(theta_coh_graph_dir + str(patient) + '_theta_graph_theory.csv' )
+    sigma_coh = pd.read_csv(sigma_coh_graph_dir + str(patient) + '_sigma_graph_theory.csv' )
+    beta_coh  = pd.read_csv(beta_coh_graph_dir + str(patient) + '_beta_graph_theory.csv' )
+    
     # Store them in a list
-    dfs = [conn_df, cc_df, hfd_df, hurst_df, disp_df]
+    dfs = [conn_df, cc_df, hfd_df, hurst_df, disp_df, delta_plv, theta_plv, sigma_plv, beta_plv,
+          delta_pli, theta_pli, sigma_pli, beta_pli, delta_wpli, theta_wpli, sigma_wpli, beta_wpli,
+          delta_coh, theta_coh, sigma_coh, beta_coh]
 
     # Check for 'Unnamed: 0' column and drop it if it exists
     dfs = [df.drop('Unnamed: 0', axis=1) if 'Unnamed: 0' in df.columns else df for df in dfs]
     
     # Extract them back
-    conn, cc, hfd, hurst, disp = dfs
-    all_measures = pd.concat([conn, cc, hfd, hurst, disp], axis = 1)
+    #conn, cc, hfd, hurst, disp, delta_plv, theta_plv, sigma = dfs
+    all_measures = pd.concat(dfs, axis = 1)
     all_dataframes.append(all_measures)
-
+    
 concat_all_dtaframes = pd.concat(all_dataframes, axis = 0)
 #remove any NaN values
 df_cleaned = concat_all_dtaframes.dropna()
@@ -70,14 +112,30 @@ all_ids = np.unique(df_cleaned['Patient_ID'].to_list())
 labels = [0] * len(human_wt) + [1] * len(human_gap)
 
 # Split the combined list into training and test sets, stratifying by the labels
-train_ids, test_ids,_, _ = train_test_split(all_ids, labels, test_size=0.3, stratify=labels, random_state=42)
+train_ids, test_ids,_, _ = train_test_split(all_ids, labels, test_size=0.3, stratify=labels, random_state= 2)
 
 #ensure Genotype is 0 and 1
 df_cleaned['Genotype'] = df_cleaned['Genotype'].map({'WT': 0, 'GAP': 1})
 
+#Results from BorutaSHAP
+accepted_columns = ['Idx', 'Genotype', 'Patient_ID',
+                    'cc_E2_M2', 'coh_theta_O1_E2', 'C3_RDE',
+                    'plv_delta_O1_C3', 'cc_F3_C3', 'pli_sigma_O1_C3',
+                    'O1_dispen', 'plv_beta_O1_E1', 'cc_E2_F3',
+                    'coh_sigma_O1_E1', 'coh_theta_O1_F3', 
+                    'plv_delta_C3_F3', 'plv_theta_O1_E1', 'cc_E2_C3',
+                    'wpli_beta_C3_F3', 'hfd_chan_F3', 'modularity_beta_coh',
+                    'hfd_E2', 'cc_O1_M2', 'cc_E2_O1', 'hfd_E1', 'cc_F3_M2',
+                    'coh_beta_E2_E1', 'cc_E1_E2', 'wpli_sigma_E2_E1', 'hfd_chan_M2',
+                    'modularity_beta_plv', 'C3_dispen', 'cc_E1_C3', 'plv_theta_O1_F3',
+                    'coh_theta_O1_E1', 'cc_C3_O1', 'plv_theta_E2_E1', 'cc_E1_F3', 
+                    'cc_E1_O1', 'cc_F3_O1', 'plv_sigma_E2_E1', 'coh_delta_C3_F3']
+
+selected_columns = df_cleaned[accepted_columns]
+
 #train and test sets
-X_train = df_cleaned[df_cleaned["Patient_ID"].isin(train_ids)]
-X_test = df_cleaned[df_cleaned["Patient_ID"].isin(test_ids)]
+X_train = selected_columns[selected_columns["Patient_ID"].isin(train_ids)]
+X_test = selected_columns[selected_columns["Patient_ID"].isin(test_ids)]
 
 group_by_patient_id = X_train.groupby(['Patient_ID'])
 groups_by_patient_id_list = np.array(X_train['Patient_ID'].values)
@@ -102,11 +160,11 @@ options = {
     'scale_pos_weight': hp.uniform('scale_pos_weight', 1, 100),
     'max_delta_step': hp.quniform('max_delta_step', 0, 10, 1),
     'tree_method': 'exact', 
-    'sample_type': hp.choice('sample_type', ['uniform', 'weighted']),
-    'normalize_type': hp.choice('normalize_type', ['tree', 'forest']),
-    'rate_drop': hp.uniform('rate_drop', 0, 1),
-    'skip_drop': hp.uniform('skip_drop', 0, 1),
-    'random_state': 42
+    #'sample_type': hp.choice('sample_type', ['uniform', 'weighted']),
+    #'normalize_type': hp.choice('normalize_type', ['tree', 'forest']),
+    #'rate_drop': hp.uniform('rate_drop', 0, 1),
+    #'skip_drop': hp.uniform('skip_drop', 0, 1),
+    'random_state': 9
 }
 
 def hyperparameter_tuning(space, X, y, n_splits=3):
@@ -123,7 +181,7 @@ def hyperparameter_tuning(space, X, y, n_splits=3):
         X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
         y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
         
-        model = xgb.XGBClassifier(booster='dart', **space)
+        model = xgb.XGBClassifier( **space)
         model.fit(X_train, y_train)
 
         # Predict probabilities for the positive class (usually column index 1)
@@ -151,6 +209,6 @@ best = fmin(fn=lambda space: hyperparameter_tuning(space, X_train_new, y_train, 
             trials=trials)
 
 # Save the Trials object to a file
-with open('/home/melissa/RESULTS/FINAL_MODEL/' + 'hyperopt_trials.pkl', 'wb') as f:
+with open('/home/melissa/RESULTS/FINAL_MODEL/' + 'hyperopt_trials_accepted_boruta_human_dart.pkl', 'wb') as f:
     pickle.dump(trials, f)
 
