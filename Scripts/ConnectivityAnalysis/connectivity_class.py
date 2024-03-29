@@ -1,4 +1,5 @@
 import os
+import sys
 import numpy as np
 import pandas as pd 
 from mne_features.bivariate import compute_phase_lock_val, compute_max_cross_corr
@@ -7,7 +8,7 @@ sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Scrip
 from load_files import LoadFiles
 from filter import NoiseFilter, HarmonicsFilter, remove_seizure_epochs
 from exploratory import FindNoiseThreshold
-from constants import SYNGAP_baseline_start, SYNGAP_baseline_end, channel_variables, SYNGAP_1_ls, SYNGAP_2_ls
+from constants import SYNGAP_baseline_start, SYNGAP_baseline_end, channel_variables, SYNGAP_1_ID_ls, SYNGAP_2_ID_ls
 
 #add feature to calculate by frequency band?
 
@@ -51,6 +52,7 @@ class ConnectivityClass:
     
 def process_data(load_files, animal, connectivity_cal, results_path, is_single_file=False):
     # Load and process data
+    print(f'loading {animal}')
     if is_single_file:
         data, brain_state = load_files.load_one_analysis_file(start_times_dict=SYNGAP_baseline_start, end_times_dict=SYNGAP_baseline_end)
         data_list = [(data, brain_state)]
@@ -69,13 +71,15 @@ def process_data(load_files, animal, connectivity_cal, results_path, is_single_f
         elif connectivity_cal == 'phase_lock_val':
             result, error = complexity_calculations.calculate_phase_lock_value(num_epochs=17280)
         results.append((result, error))
-    
+        print('calculations complete')
     # Save results
     if len(results) == 1:
         np.save(f'{results_path}{animal}_{connectivity_cal}.npy', results[0][0])
         np.save(f'{results_path}{animal}_{connectivity_cal}_error_1.npy', results[0][1])
+        print(f'{animal} saved')
     else:
         max_concat = np.concatenate([res[0] for res in results], axis=0)
         np.save(f'{results_path}{animal}_{connectivity_cal}.npy', max_concat)
+        print(f'{animal} saved')
         for i, (_, error) in enumerate(results, start=1):
             np.save(f'{results_path}{animal}_{connectivity_cal}_error_{i}.npy', error)
