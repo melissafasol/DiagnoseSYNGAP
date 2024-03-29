@@ -28,11 +28,13 @@ class PowerBands():
         self.fs= fs
         self.nperseg = nperseg
         
-    def power_band_calculations(self, data_array):
+    def power_band_calculations(self, data_array, clean_indices):
 
         band_power_ls = []
 
-        for epoch in data_array:
+        for idx, epoch in enumerate(data_array):
+            if idx not in clean_indices:
+                continue
             freq, power = scipy.signal.welch(epoch, window='hann', fs = self.fs, nperseg = self.nperseg)
             freq_power = np.mean(power[self.freq_low:self.freq_high])
             band_power_ls.append(freq_power)
@@ -41,7 +43,7 @@ class PowerBands():
         
         return power_array
     
-    def functional_region_power_recording(self, bandpass_filtered_data, motor_indices, visual_indices, somatosensory_indices):
+    def functional_region_power_recording(self, bandpass_filtered_data, motor_indices, visual_indices, somatosensory_indices, clean_indices):
         
         '''
         bandpass_filtered_data = filtered data array
@@ -57,19 +59,19 @@ class PowerBands():
         # Process data for motor region
         for motor_channel in motor_indices:
             motor_filtered_channel_data = np.split(bandpass_filtered_data[motor_channel], 17280, axis=0)
-            motor_power_calc = self.power_band_calculations(motor_filtered_channel_data)
+            motor_power_calc = self.power_band_calculations(motor_filtered_channel_data, clean_indices)
             motor_power_ls.append(motor_power_calc)
     
         # Process data for visual region
         for visual_channel in visual_indices:
             visual_filtered_channel_data = np.split(bandpass_filtered_data[visual_channel], 17280, axis=0)
-            visual_power_calc = self.power_band_calculations(visual_filtered_channel_data)
+            visual_power_calc = self.power_band_calculations(visual_filtered_channel_data, clean_indices)
             visual_power_ls.append(visual_power_calc)
             
         # Process data for somatosensory region
         for soma_channel in somatosensory_indices:
             somato_filtered_channel_data = np.split(bandpass_filtered_data[soma_channel], 17280, axis=0)
-            somatosensory_power_calc = self.power_band_calculations(somato_filtered_channel_data)
+            somatosensory_power_calc = self.power_band_calculations(somato_filtered_channel_data, clean_indices)
             somatosensory_power_ls.append(somatosensory_power_calc)
             
         # Combine the lists of motor power into NumPy arrays
