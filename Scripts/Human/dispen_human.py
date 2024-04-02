@@ -10,9 +10,11 @@ import EntropyHub as EH
 
 from preprocess_human import load_filtered_data, split_into_epochs, select_clean_indices
 
+
 human_data_folder = '/home/melissa/PREPROCESSING/SYNGAP1/SYNGAP1_Human_Data'
 results_path = '/home/melissa/RESULTS/FINAL_MODEL/Human/Complexity/DispEn_DF/'
 noise_directory = '/home/melissa/PREPROCESSING/SYNGAP1/human_npy/harmonic_idx/'
+mne_directory = '' #path to clean indices
 
 patient_list  =  ['P1 N1', 'P2 N1', 'P2 N2', 'P3 N1', 'P3 N2', 'P4 N1', 'P4 N2', 'P5 N1',
                   'P6 N1', 'P6 N2', 'P7 N1', 'P7 N2','P8 N1','P10 N1', 'P11 N1', 'P15 N1',

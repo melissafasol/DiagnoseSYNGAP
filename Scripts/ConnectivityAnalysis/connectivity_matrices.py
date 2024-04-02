@@ -17,20 +17,14 @@ sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Scrip
 from load_files import LoadFiles
 from filter import NoiseFilter, HarmonicsFilter, remove_seizure_epochs
 from exploratory import FindNoiseThreshold
-from constants import SYNGAP_baseline_start, SYNGAP_baseline_end, channel_variables
+from constants import SYNGAP_baseline_start, SYNGAP_baseline_end, channel_variables, channel_names, SYNGAP_2_ID_ls, SYNGAP_1_ID_ls
 
-SYNGAP_1_ID_ls = [ 'S7088', 'S7092', 'S7094', 'S7098', 'S7068', 'S7074', 'S7076', 'S7071', 'S7075', 'S7101']
-syngap_2_ls =  ['S7091', 'S7070', 'S7072', 'S7083', 'S7063','S7064', 'S7069', 'S7086', 'S7091'] #S7101
 
 analysis_ls = ['S7068', 'S7074', 'S7075', 'S7071', 'S7076', 'S7083', 'S7088', 'S7092', 'S7086', 'S7063', 'S7064', 
                'S7069', 'S7070', 'S7072', 'S7086', 'S7091', 'S7101', 'S7094', 'S7096', 'S7098']
 
-channel_names = ['S1Tr_RIGHT', 'M2_FrA_RIGHT','M2_ant_RIGHT','M1_ant_RIGHT', 'V2ML_RIGHT',
-                 'V1M_RIGHT', 'S1HL_S1FL_RIGHT', 'V1M_LEFT','V2ML_LEFT', 'S1HL_S1FL_LEFT',
-                 'M1_ant_LEFT','M2_ant_LEFT','M2_FrA_LEFT', 'S1Tr_LEFT']
 
 directory_path = '/home/melissa/PREPROCESSING/SYNGAP1/numpyformat_baseline'
-os.chdir('/home/melissa/PREPROCESSING/SYNGAP1/cleaned_br_files/')
 
 
 info = mne.create_info(ch_names= channel_names, sfreq=250.4, ch_types='eeg')

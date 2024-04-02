@@ -1,29 +1,25 @@
-import os 
+# Standard library imports
+import numpy as np
+import scipy.signal
 import sys
 
-import numpy as np 
-import pandas as pd 
-import scipy 
-import matplotlib
-import mne 
-
+# Third-party imports
+import mne
 from mne_features.univariate import compute_higuchi_fd, compute_hurst_exp
 
+# Local application imports
+sys.path.insert(0, './Scripts/Preprocessing')
+from constants import patient_list
 from preprocess_human import load_filtered_data, split_into_epochs, select_clean_indices
 
-human_data_folder = '/home/melissa/PREPROCESSING/SYNGAP1/SYNGAP1_Human_Data'
-results_path = '/home/melissa/RESULTS/XGBoost/Human_SYNGAP1/Theta_Power/'
-noise_directory = '/home/melissa/PREPROCESSING/SYNGAP1/human_npy/harmonic_idx/'
-
-patient_list  = [ 'P8 N1'] #, 'P6 N2']
-    
-    #'P23 N2', 'P23 N3', 'P21 N3'
-
-#['P3 N1', 'P3 N2', 'P4 N1', 'P4 N2', 'P5 N1','P6 N1', 'P6 N2', 'P7 N1', 'P7 N2', 'P8 N1']
-
-            #['P1 N1', 'P10 N1', 'P11 N1', 'P15 N1', 'P16 N1', 'P17 N1', 'P18 N1', 'P20 N1', 'P21 N1', 'P21 N2', 'P22 N1',
-            # 'P23 N1', 'P24 N1', 'P28 N1', 'P28 N2', 'P29 N2', 'P30 N1']
-
+# Constants
+SAMPLING_RATE = 256
+WINDOW = 'hann'
+NPERSEG = 7680
+FREQUENCY_BANDS = {'delta': (15,61), #1-4Hz
+                    'theta': (120,211), #4-8Hz
+                    'alpha': (140, 361), #8-12Hz
+                    'beta': (450, 901)} #13-30Hz
 
 #indices for frequency bands
 # delta [15:61] [1:4]
@@ -31,22 +27,32 @@ patient_list  = [ 'P8 N1'] #, 'P6 N2']
 # alpha [140: 361] [8:12]
 # beta [450: 901] [13:30]
 
+# Base directories
+PROJECT_DIR = '/home/melissa'
+DATA_DIR = f'{PROJECT_DIR}/PREPROCESSING/SYNGAP1/SYNGAP1_Human_Data'
+RESULTS_DIR = f'{PROJECT_DIR}/RESULTS/XGBoost/Human_SYNGAP1/Theta_Power'
+NOISE_DIR = f'{PROJECT_DIR}/PREPROCESSING/SYNGAP1/human_npy/harmonic_idx'
 
-for patient in patient_list:
-    print(patient)
-    print('delta')
-    file_name = patient + '_(1).edf'
-    filtered_data = load_filtered_data(file_path = human_data_folder, file_name = file_name)
-    number_epochs, epochs = split_into_epochs(filtered_data, sampling_rate = 256, num_seconds = 30)
-    clean_indices = select_clean_indices(noise_directory = noise_directory, patient_id = patient, total_num_epochs = number_epochs)
-    
-    channels_idx = list(np.arange(0, 6))
-    for chan in channels_idx:
+def calculate_power_for_patient(patient_id, frequency_band):
+    file_name = f'{patient_id}_(1).edf'
+    filtered_data = load_filtered_data(file_path=DATA_DIR, file_name=file_name)
+    number_epochs, epochs = split_into_epochs(filtered_data, sampling_rate=SAMPLING_RATE, num_seconds=30)
+    clean_indices = select_clean_indices(noise_directory=NOISE_DIR, patient_id=patient_id, total_num_epochs=number_epochs)
+
+    for channel_idx in range(6):  # Assuming 6 channels as per original script
         power_ls = []
         for clean_idx in clean_indices:
-            power_calculations = scipy.signal.welch(epochs[clean_idx][chan], window = 'hann', fs = 256, nperseg = 7680)
-            avg_power = np.mean(power_calculations[1][120:211])
+            freqs, power = scipy.signal.welch(epochs[clean_idx][channel_idx], fs=SAMPLING_RATE, window=WINDOW, nperseg=NPERSEG)
+            avg_power = np.mean(power[FREQUENCY_BANDS[frequency_band][0]:FREQUENCY_BANDS[frequency_band][1]])
             power_ls.append(avg_power)
 
         power_array = np.array(power_ls)
-        np.save(results_path + str(patient) + '_chan_' + str(chan) + '.npy', power_array)
+        np.save(f'{RESULTS_DIR}/{patient_id}_chan_{channel_idx}.npy', power_array)
+
+def main():
+    for patient in patient_list:
+        print(patient, 'delta')  # Example for one frequency band, expand as needed
+        calculate_power_for_patient(patient, 'theta')
+
+if __name__ == "__main__":
+    main()
