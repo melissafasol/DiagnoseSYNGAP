@@ -1,4 +1,4 @@
-'''Script to apply method from Multivariate cross-frequency coupling via generalized eigendecomposition paper'''
+'''Script to apply method from multivariate cross-frequency coupling via generalized eigendecomposition paper'''
 
 import os 
 import sys 

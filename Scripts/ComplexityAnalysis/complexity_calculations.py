@@ -34,7 +34,7 @@ analysis_ls = [ 'S7088', 'S7092', 'S7094', 'S7098', 'S7068', 'S7074', 'S7076', '
 
 analysis_ls_miss = ['S7063', 'S7064', 'S7069', 'S7088','S7086']
 
-complex_calculation_types = ['hurst'] #hfd
+complex_calculation_types = ['hurst', 'hfd']
 
 for complx in complex_calculation_types:
     for animal in analysis_ls_miss:
