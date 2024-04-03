@@ -275,7 +275,8 @@ channel_variables = {'channel_numbers': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1
 #animal IDs that either have one or two recordings 
 SYNGAP_2_ID_ls =  ['S7086', 'S7096', 'S7070','S7072','S7083', 'S7063','S7064','S7069', 'S7086','S7091'] 
 SYNGAP_1_ID_ls =  ['S7076', 'S7101', 'S7088', 'S7092', 'S7094' , 'S7098', 'S7068', 'S7074', 'S7076', 'S7071', 'S7075']
-
+seizure_free_IDs = ['S7070', 'S7083', 'S7098', 'S7101', 'S7096']
+seizure_two_files = ['S7063', 'S7064', 'S7069', 'S7072']
 ## human data 
 channels_dict_human = {'EOG': [0], 'E1': [1], 'E2': [2], 'F3': [3], 'C3': [4], 'O1': [5], 'M2': [6]}
 
@@ -292,3 +293,6 @@ genotype_human = {'P1': 'WT', 'P2': 'GAP', 'P3': 'GAP', 'P4': 'WT',
                   'P21': 'WT', 'P22': 'GAP', 'P23': 'GAP', 'P24': 'WT',
                   'P25': 'WT', 'P26': 'GAP', 'P27': 'WT', 'P28': 'WT',
                   'P29': 'WT', 'P30': 'GAP'} 
+
+nt_genotype_human = ['P1 N1', 'P11 N1', 'P17 N1', 'P18 N1', 'P21 N1', 'P21 N2', 'P24 N1', 'P28 N1', 'P28 N2', 'P29 N2']
+gap_genotype_human = ['P10 N1', 'P15 N1', 'P16 N1', 'P20 N1', 'P22 N1', 'P23 N1', 'P30 N1']
