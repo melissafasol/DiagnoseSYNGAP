@@ -91,8 +91,81 @@ class PowerBands():
         
         return motor_mean, visual_mean, soma_mean
     
+    
+    def calculate_power_average(self, bandpass_filtered_data, clean_indices, br_values, animal, frequency, all_channels = True, channel = None):
+        'function to calculate power per channel'
+
+        if not all_channels and channel is not None:
+            channel_power = []
+            split_data = np.array_split(bandpass_filtered_data[channel], indices_or_sections=int(bandpass_filtered_data[channel].shape[0]/1252), axis=0)
+            epoch_num = 0
+            for epoch in split_data:
+                if len(epoch) != 1252:  # Ensure each split/epoch has the intended number of samples
+                    continue
+                if epoch_num not in clean_indices:
+                    epoch_num += 1
+                    continue
+                freq, power = scipy.signal.welch(epoch, window='hann', fs=self.fs, nperseg=self.nperseg)
+                freq_power = np.mean(power[self.freq_low:self.freq_high])
+                channel_power.append(freq_power)
+                epoch_num += 1
+            one_channel_power_df = pd.DataFrame({'Power': channel_power,'Channel': [channel]*len(channel_power), 'Idx': clean_indices,
+                                            'Brainstate': br_values, 'Animal_ID': [animal]*len(channel_power), 'Frequency_Band': [frequency]*len(channel_power) })
+
+            return one_channel_power_df
+
+        if not all_channels and channel is None:
+            return 'Error: enter a channel number or set to process all channels'
+        else:
+
+            channels = list(range(bandpass_filtered_data.shape[0]))
+            power_all_channels = []
+
+            for channel_idx in channels:
+                print(channel_idx)
+                channel_power = []
+                #split data into epochs to only select clean epoch indices
+                split_data = np.array_split(bandpass_filtered_data[channel_idx], indices_or_sections=int(bandpass_filtered_data[channel_idx].shape[0]/1252), axis=0)
+                #keep track of epoch number to add idx column to dataframe
+                epoch_num = 0
+                for epoch in split_data:
+                    if len(epoch) != 1252:  # Ensure each split/epoch has the intended number of samples
+                        continue
+                    if epoch_num not in clean_indices:
+                        epoch_num += 1
+                        continue
+                    freq, power = scipy.signal.welch(epoch, window='hann', fs=self.fs, nperseg=self.nperseg)
+                    freq_power = np.mean(power[self.freq_low:self.freq_high])
+                    channel_power.append(freq_power)
+                    epoch_num += 1
+                channel_power_df = pd.DataFrame({'Power': freq_power, 'Channel': [channel_idx]*len(channel_power), 'Idx': clean_indices,
+                                            'Brainstate': br_values, 'Animal_ID': [animal]*len(channel_power), 'Frequency_Band': [frequency]*len(channel_power) })
+                power_all_channels.append(channel_power_df)
+
+            power_concat = pd.concat(power_all_channels, axis = 0)
+
+            return power_concat
+        
+    def average_psd_overall(self, data_array, clean_indices): 
+        power_array_ls = []
+        split_data = np.array_split(data_array, 17280, axis=0)
+        for idx, data in enumerate(split_data):
+            if idx not in clean_indices:
+                continue
+            power_calculations = scipy.signal.welch(data, window = 'hann', fs = self.fs, nperseg = self.nperseg)
+            frequency = power_calculations[0]
+            power_array_ls.append(power_calculations[1])
+            
+        df_psd = pd.DataFrame(power_array_ls)
+        mean_values = df_psd.mean(axis = 0)
+        mean_psd = mean_values.to_numpy()
+            
+        return mean_psd, frequency
+    
     def power_band_human(self, epoch):
 
         freq, power = scipy.signal.welch(epoch, window='hann', fs = self.fs, nperseg = self.nperseg)
         
         return freq, power
+    
+    
