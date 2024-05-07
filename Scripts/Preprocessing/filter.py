@@ -55,6 +55,33 @@ class NoiseFilter:
         bandpass_filtered_data=butter_bandpass(data=selected_channels) 
                         
         return bandpass_filtered_data
+    
+    
+    def specify_filter(self, low, high):
+        def butter_bandpass(data):
+            butter_b, butter_a = signal.butter(self.order, [low/self.nyquist,high/self.nyquist], btype = 'band', analog = False)
+            filtered_data = signal.filtfilt(butter_b, butter_a, data)
+            return filtered_data
+        
+        indices = []
+        if self.ch_type == 'eeg':
+            for idx, ch in enumerate(self.channel_types):
+                if ch == 'eeg':
+                    indices.append(idx)
+        if self.ch_type == 'emg':
+            for idx, ch in enumerate(self.channel_types):
+                if ch == 'emg':
+                        indices.append(idx)
+        if self.ch_type == 'all':
+            indices = self.channel_numbers
+        
+        
+        
+        #Select all, emg, or eeg channel indices to apply bandpass filter                                    
+        selected_channels = self.unfiltered_data[indices, :]     
+        bandpass_filtered_data=butter_bandpass(data=selected_channels) 
+                        
+        return bandpass_filtered_data
 
     
     def power_calc_noise(self, bandpass_filtered_data, slope_thresh, int_thresh, clean_br, br_number):

@@ -55,4 +55,16 @@ class LoadFiles():
         br_indices = br_state_file.loc[br_state_file['brainstate'] == br_number].index.to_list()
         br_epochs = np.array(split_epochs)[br_indices]
         return br_epochs
-        
+    
+    def choose_indices(self, brain_state_file, all_brain_states=True, brain_state = None):
+        # Check if we're not looking for all brain states and a specific brain state is provided
+        if not all_brain_states and brain_state is not None:
+            # Filter indices where 'brainstate' matches the specified brain state
+            
+            brain_state_idx = brain_state_file.loc[brain_state_file['brainstate'] == brain_state].index.to_list()
+            brain_state_values = brain_state_file.iloc[brain_state_idx, 0].to_list()
+            return brain_state_idx, brain_state_values
+        else:
+            brain_state_idx = brain_state_file.loc[brain_state_file['brainstate'].isin([0, 1, 2])].index.to_list()
+            brain_state_values = brain_state_file.iloc[brain_state_idx, 0].to_list()
+            return brain_state_idx, brain_state_values
