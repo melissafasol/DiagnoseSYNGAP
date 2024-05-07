@@ -17,8 +17,8 @@ results_path = '/home/melissa/RESULTS/FINAL_MODEL/Rat/Power/'
 error_path = '/home/melissa/RESULTS/XGBoost/SYNGAP1/ConnectivityErrors/'
 
 
-analysis_ls = ['S7068', 'S7101', 'S7088', 'S7092', 'S7094', 'S7098', 'S7068', 'S7074', 'S7076', 'S7071', 'S7075',
-               'S7091', 'S7070', 'S7072', 'S7083', 'S7063','S7064', 'S7069', 'S7086', 'S7091', 'S7101']
+analysis_ls = ['S7063'] #['S7068', 'S7101', 'S7088', 'S7092', 'S7094', 'S7098', 'S7068', 'S7074', 'S7076', 'S7071', 'S7075',
+              # 'S7091', 'S7070', 'S7072', 'S7083', 'S7063','S7064', 'S7069', 'S7086', 'S7091', 'S7101']
 
 #specify frequency bands and channel numbers 
 frequency_names = ['delta', 'theta', 'sigma', 'beta', 'gamma']
@@ -26,6 +26,8 @@ frequency_bands = [[1, 5], [5, 11], [11, 16], [16, 30], [30, 48]]
 motor = [1,2,3,10,11,12]
 visual = [4, 5, 7, 8]
 somatosensory = [0, 6, 9, 13]
+
+
 
 for animal in analysis_ls:
     print('loading ' + str(animal))
@@ -60,21 +62,28 @@ for animal in analysis_ls:
             region_means['Motor'].append(motor_mean)
             region_means['Visual'].append(visual_mean)
             region_means['Soma'].append(soma_mean)
+            #print(len(clean_br_values))
+            #print(len(motor_mean))
+            #print(len)
         
         # Combine data from multiple recordings if necessary
-        for region in region_means:
-            combined_mean = np.concatenate(region_means[region], axis=0) if len(region_means[region]) > 1 else region_means[region][0]
-            region_means[region] = combined_mean.tolist()
+        #for region in region_means:
+        #    combined_mean = np.concatenate(region_means[region], axis=0) if len(region_means[region]) > 1 else region_means[region][0]
+        #    region_means[region] = combined_mean.tolist()
         
         freq_df = pd.DataFrame({f'{region}_{freq_name}': region_means[region] for region in region_means})
         br_df = pd.DataFrame({'brainstate': clean_br_values})
-        freq_concat = pd.concat([freq_df, br_df], axis = 1)
-        freq_ls.append(freq_concat)
-        print(freq_concat)
+        print(len(freq_df))
+        print(len(br_df))
+        freq_ls.append(freq_df)
+        print('Freq concat')
+        print(freq_df)
     
     all_freqs = pd.concat(freq_ls, axis=1)
     id_df = pd.DataFrame(data={'Animal_ID': [animal]*len(all_freqs)})
-    df_concat = pd.concat([all_freqs, id_df], axis=1)
+    clean_br_df = pd.DataFrame(data = {'Brainstate': clean_br_values})
+    print(len(clean_br_df))
+    df_concat = pd.concat([all_freqs, id_df, clean_br_df], axis=1)
     print(df_concat)
     results_file_path = os.path.join(results_path, f'{animal}_power_all_frequency_bands.csv')
     df_concat.to_csv(results_file_path)
