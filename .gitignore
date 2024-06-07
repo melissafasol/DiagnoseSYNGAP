@@ -8,3 +8,7 @@ Scripts/Human/.gitignore
 Scripts/Graph/__pycache__/
 Scripts/ComplexityAnalysis/__pycache__/
 Scripts/ConnectivityAnalysis/__pycache__/
+Scripts/Preprocessing/RawRefactor/__pycache__/
+Scripts/Connectivity/__pycache__/connectivity_class.cpython-38.pyc
+Scripts/Power/.ipynb_checkpoints
+Results
