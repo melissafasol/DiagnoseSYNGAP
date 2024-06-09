@@ -32,3 +32,17 @@ class ComplexClass:
     def calculate_hfd_exp(self, channel_data):
         hfd_values = [compute_higuchi_fd(np.expand_dims(epoch, axis=0)) for epoch in channel_data]
         return np.array(hfd_values).flatten()
+
+    def transform_to_dataframe(self, complexity_array, channel_labels, complexity_value):
+        num_channels, num_epochs = complexity_array.shape
+        epochs = np.tile(np.arange(num_epochs), num_channels)
+        channels = np.repeat(channel_labels, num_epochs)
+        complex_values = complexity_array.flatten()
+
+        df = pd.DataFrame({
+        'Epoch': epochs,
+        'Channel': channels,
+        f'{complexity_value}': complex_values
+        })
+
+        return df
