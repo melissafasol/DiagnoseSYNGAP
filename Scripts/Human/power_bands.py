@@ -7,10 +7,10 @@ import sys
 import mne
 from mne_features.univariate import compute_higuchi_fd, compute_hurst_exp
 
-# Local application imports
-sys.path.insert(0, './Scripts/Preprocessing')
-from constants import patient_list
 from preprocess_human import load_filtered_data, split_into_epochs, select_clean_indices
+sys.path.insert(0, '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Scripts/Preprocessing')
+from constants import patient_list
+
 
 # Constants
 SAMPLING_RATE = 256

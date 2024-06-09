@@ -50,10 +50,10 @@ class ConnectivityClass:
         
         return phase_lock_array, error_array
     
-#function to apply connectivity class to calculate MCC and PLV for recordings with one or two recordings per animal     
 def process_data_mcc_plv(load_files, animal, connectivity_cal, results_path, is_single_file=False):
-    # Load and process data
-    print(f'loading {animal}')
+    print(f'Loading data for {animal}')
+
+    # Loading data based on whether a single or multiple files are provided
     if is_single_file:
         data, brain_state = load_files.load_one_analysis_file(start_times_dict=SYNGAP_baseline_start, end_times_dict=SYNGAP_baseline_end)
         data_list = [(data, brain_state)]
@@ -61,37 +61,96 @@ def process_data_mcc_plv(load_files, animal, connectivity_cal, results_path, is_
         data_1, data_2, brain_state_1, brain_state_2 = load_files.load_two_analysis_files(start_times_dict=SYNGAP_baseline_start, end_times_dict=SYNGAP_baseline_end)
         data_list = [(data_1, brain_state_1), (data_2, brain_state_2)]
     
-    
-    frequency_bands = [(1, 5), (5,11), (11,16), (16, 30), (30, 48)]
+    # Define frequency bands and their labels
+    frequency_bands = [(1, 5), (5, 11), (11, 16), (16, 30), (30, 48)]
     frequency_names = ['delta', 'theta', 'sigma', 'beta', 'gamma']
     
     results = []
+    # Iterate over each dataset
     for data, brain_state in data_list:
+        # Process each frequency band
         for (low, high), label in zip(frequency_bands, frequency_names):
-            print(low)
-            print(high)
+            print(f'Processing {label} band: {low}-{high} Hz')
+            # Filter data for each band
             noise_filter = NoiseFilter(data, brain_state_file=brain_state, channelvariables=channel_variables, ch_type='eeg')
-            bandpass_filtered_data = noise_filter.specify_filter(low = low, high = high)
+            bandpass_filtered_data = noise_filter.specify_filter(low=low, high=high)
             filtered_data = np.moveaxis(np.array(np.split(bandpass_filtered_data, 17280, axis=1)), 1, 0)
             complexity_calculations = ConnectivityClass(filtered_data)
+
+            # Compute connectivity based on the specified method
             if connectivity_cal == 'cross_corr':
                 result, error = complexity_calculations.calculate_max_cross_corr(num_epochs=17280)
             elif connectivity_cal == 'phase_lock_val':
                 result, error = complexity_calculations.calculate_phase_lock_value(num_epochs=17280)
-            results.append((result, error))
-            print('calculations complete')
-        # Save results
-        if len(results) == 1:
-            np.save(f'{results_path}{animal}_{connectivity_cal}_{label}.npy', results[0][0])
-            #np.save(f'{results_path}{animal}_{connectivity_cal}_error_1.npy', results[0][1])
-            print(f'{animal} saved')
-        else:
-            max_concat = np.concatenate([res[0] for res in results], axis=0)
-            np.save(f'{results_path}{animal}_{connectivity_cal}_{label}.npy', max_concat)
-            print(f'{animal} saved')
-            #for i, (_, error) in enumerate(results, start=1):
-            # np.save(f'{results_path}{animal}_{connectivity_cal}_error_{i}.npy', error)
 
+            # Append results
+            results.append((result, error))
+
+        # Save results for each frequency band
+        for idx, (result, error) in enumerate(results):
+            label = frequency_names[idx % len(frequency_names)]
+            if is_single_file or idx < len(results) / 2:
+                save_path = f'{results_path}{animal}_{connectivity_cal}_{label}.npy'
+                np.save(save_path, result)
+                print(f'Saved {save_path}')
+            else:
+                # Handle concatenation of results if there are two datasets per band
+                concatenated_result = np.concatenate([results[i][0] for i in range(idx - len(frequency_names), idx + 1, len(frequency_names))], axis=0)
+                save_path = f'{results_path}{animal}_{connectivity_cal}_{label}_concatenated.npy'
+                np.save(save_path, concatenated_result)
+                print(f'Saved {save_path}')
+
+    print('Processing complete')
+    
+##function to apply connectivity class to calculate MCC and PLV for recordings with one or two recordings per animal     
+#def process_data_mcc_plv(load_files, animal, connectivity_cal, results_path, is_single_file=False):
+#    # Load and process data
+#    print(f'loading {animal}')
+#    if is_single_file:
+#        data, brain_state = load_files.load_one_analysis_file(start_times_dict=SYNGAP_baseline_start, end_times_dict=SYNGAP_baseline_end)
+#        data_list = [(data, brain_state)]
+#    else:
+#        data_1, data_2, brain_state_1, brain_state_2 = load_files.load_two_analysis_files(start_times_dict=SYNGAP_baseline_start, end_times_dict=SYNGAP_baseline_end)
+#        data_list = [(data_1, brain_state_1), (data_2, brain_state_2)]
+#    
+#    
+#    frequency_bands = [(1, 5), (5,11), (11,16), (16, 30), (30, 48)]
+#    frequency_names = ['delta', 'theta', 'sigma', 'beta', 'gamma']
+#    
+#    results = []
+#    for data, brain_state in data_list:
+#        for (low, high), label in zip(frequency_bands, frequency_names):
+#            print(low)
+#            print(high)
+#            noise_filter = NoiseFilter(data, brain_state_file=brain_state, channelvariables=channel_variables, ch_type='eeg')
+#            bandpass_filtered_data = noise_filter.specify_filter(low = low, high = high)
+#            filtered_data = np.moveaxis(np.array(np.split(bandpass_filtered_data, 17280, axis=1)), 1, 0)
+#            complexity_calculations = ConnectivityClass(filtered_data)
+#            if connectivity_cal == 'cross_corr':
+#                result, error = complexity_calculations.calculate_max_cross_corr(num_epochs=17280)
+#                
+#                if len(results) == 1:
+#                    np.save(f'{results_path}{animal}_{connectivity_cal}_{label}.npy', results[0][0])
+#                    #np.save(f'{results_path}{animal}_{connectivity_cal}_error_1.npy', results[0][1])
+#                    print(f'{animal} saved')
+#                else:
+#                    max_concat = np.concatenate([res[0] for res in results], axis=0)
+#                    np.save(f'{results_path}{animal}_{connectivity_cal}_{label}.npy', max_concat)
+#                    print(f'{animal} saved')
+#            
+#            elif connectivity_cal == 'phase_lock_val':
+#                result, error = complexity_calculations.calculate_phase_lock_value(num_epochs=17280)
+#                results.append((result, error))
+#                print('calculations complete')
+#                # Save results
+#                if len(results) == 1:
+#                    np.save(f'{results_path}{animal}_{connectivity_cal}_{label}.npy', results[0][0])
+#                    print(f'{animal} saved')
+#                else:
+#                    max_concat = np.concatenate([res[0] for res in results], axis=0)
+#                    np.save(f'{results_path}{animal}_{connectivity_cal}_{label}.npy', max_concat)
+#                    print(f'{animal} saved')
+                    
 
 def process_data_mne_connect(animal, conn_mes, data, brain_state, frequency_bands, frequency_names, results_path, sfreq=250.4, n_cycles=3):
     noise_filter = NoiseFilter(data, brain_state_file=brain_state, channelvariables=channel_variables, ch_type='eeg')
