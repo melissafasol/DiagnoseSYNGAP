@@ -42,21 +42,34 @@ class ConnectivityClass:
         cross_corr_concat = pd.concat(cross_corr_ls)
         error_array = np.array(error_ls)
         return cross_corr_concat, error_array
+    
+    def calculate_plv_mne(self, filtered_data):
+        tr_filter = filtered_data.transpose(1, 0, 2)
+        for freq_band, freq_name in zip(frequency_bands, frequency_names):
+            connectivity_array = spectral_connectivity_time(tr_filter, freqs=freq_band, n_cycles= 3,
+                                                        method= 'plv', average=False, sfreq=250.4,
+                                                        faverage=True).get_data()
+            for epoch in connectivity_array:
+                df = pd.DataFrame([epoch], columns=[f'{ch[0]}_{ch[1]}_{freq_band}' for ch in self.channel_pairs()])
+            print(connectivity_array)
+            
+        #save_path = results_path / f'{animal}_{conn_mes}_{freq_name}.npy'
+        #np.save(save_path, connectivity_array)
+    
+    
+def process_data_mne_connect(animal, conn_mes, data, brain_state, frequency_bands, frequency_names, results_path, sfreq=250.4, n_cycles=3):
+    noise_filter = NoiseFilter(data, brain_state_file=brain_state, channelvariables=channel_variables, ch_type='eeg')
+    bandpass_filtered_data = noise_filter.filter_data_type()
+    filter_data = np.moveaxis(np.array(np.split(bandpass_filtered_data, 17280, axis=1)), 1, 0)
+    tr_filter = filter_data.transpose(1, 0, 2)
+    
+    for freq_band, freq_name in zip(frequency_bands, frequency_names):
+        connectivity_array = spectral_connectivity_time(tr_filter, freqs=freq_band, n_cycles=n_cycles,
+                                                        method=conn_mes, average=False, sfreq=sfreq,
+                                                        faverage=True).get_data()
+        save_path = results_path / f'{animal}_{conn_mes}_{freq_name}.npy'
+        np.save(save_path, connectivity_array)
 
-    def calculate_phase_lock_value(self, num_epochs):
-        phase_lock_ls = []
-        error_ls = []
-        for i in range(num_epochs):
-            try:
-                one_epoch_1 = compute_phase_lock_val(sfreq=250.4, data=self.filtered_data[:, i])
-                phase_lock_ls.append(one_epoch_1)
-            except Exception as e:
-                print(f'Error for index {i}: {e}')
-                error_ls.append(i)
-
-        phase_lock_array = np.array(phase_lock_ls)
-        error_array = np.array(error_ls)
-        return phase_lock_array, error_array
 
 directory_path = '/home/melissa/PREPROCESSING/SYNGAP1/numpyformat_baseline/'
 results_path = '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Results/Connectivity/'
@@ -68,12 +81,8 @@ for animal in analysis_ls:
     animal = str(animal)
     load_files = LoadFiles(directory_path, animal)
     if animal in SYNGAP_2_ls:
-        pass
-        #data_1, data_2, brain_state_1, brain_state_2 = load_files.load_two_analysis_files(start_times_dict=SYNGAP_baseline_start, end_times_dict=SYNGAP_baseline_end)
-        #data_list = [(data_1, brain_state_1), (data_2, brain_state_2)]
-    elif animal in SYNGAP_1_ls:
-        data, brain_state = load_files.load_one_analysis_file(start_times_dict=SYNGAP_baseline_start, end_times_dict=SYNGAP_baseline_end)
-        data_list = [(data, brain_state)]
+        data_1, data_2, brain_state_1, brain_state_2 = load_files.load_two_analysis_files(start_times_dict=SYNGAP_baseline_start, end_times_dict=SYNGAP_baseline_end)
+        data_list = [(data_1, brain_state_1), (data_2, brain_state_2)]
         frequency_bands = [(1, 5), (5, 11), (11, 16), (16, 30), (30, 48)]
         frequency_names = ['delta', 'theta', 'sigma', 'beta', 'gamma']
         connectivity_cal = 'cross_corr'
@@ -89,7 +98,10 @@ for animal in analysis_ls:
                 if connectivity_cal == 'cross_corr':
                     df_result, error = complexity_calculations.calculate_max_cross_corr(num_epochs=17280, freq_band = label)
                     freq_results.append(df_result)
+
             freq_concat = pd.concat(freq_results)
             results.append(freq_concat) 
         all_frequencies_concat = pd.concat(results, axis = 1)
         all_frequencies_concat.to_csv(os.path.join(results_path, f'{animal}_{connectivity_cal}.csv'))
+    else:
+        pass
