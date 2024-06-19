@@ -1,4 +1,4 @@
-# From Data to Diagnosis: Explainable AI techniques in \textit{SYNGAP1} Biomarker Discovery
+# From Data to Diagnosis: Explainable AI techniques in *SYNGAP1* Biomarker Discovery
 
 Mutations in the SYNGAP1 gene are a major genetic risk factor for neurodevelopmental disorders (NDDs). A large number of
 genes involved in synaptic function have been implicated in rare de novo NDDs. 
