@@ -1,3 +1,12 @@
-# EEGFeatureExtraction
+# From Data to Diagnosis: Explainable AI techniques in \textit{SYNGAP1} Biomarker Discovery
 
-Project to calculate functional connectivity, complexity and graph theory metrics using signal processing techniques from EEG signals recorded in rodent models and human patients with mutations in SYNGAP1 and perform XGBoost classification to distinguish between mutants and wild-types.
+Mutations in the SYNGAP1 gene are a major genetic risk factor for neurodevelopmental disorders (NDDs). A large number of
+genes involved in synaptic function have been implicated in rare de novo NDDs. 
+
+We calculate three categories of features to assess synaptic function from EEG recordings: 
+(1) Spectral features 
+(2) Connectivity features
+(3) Complexity features
+
+These features are used to train an XGBoost and LightGBM classifier to distinguish SYNGAP1 characteristics from controls, and apply explainable artificial intelligence (XAI) techniques to identify the most influential features in genotype prediction. 
+
