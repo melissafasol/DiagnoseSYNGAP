@@ -1,6 +1,24 @@
 import numpy as np
 import pandas as pd
 from mne_features.univariate import compute_higuchi_fd, compute_hurst_exp
+import EntropyHub as EH
+
+class DispersionEntropy:
+    
+    def __init__(self, dat_array):
+        self.dat_array = dat_array
+        
+        
+    def disp_en(self):
+        disp_en_ls =  []
+
+        for epoch in self.dat_array:
+            Dispx_1, Ppi_1 = EH.DispEn(epoch, m = 3, tau = 2, c = 4, Typex = 'ncdf')
+            disp_en_ls.append(Dispx_1)
+        
+        disp_en_array = np.array(disp_en_ls)
+        
+        return disp_en_array
 
 class ComplexClass:
     

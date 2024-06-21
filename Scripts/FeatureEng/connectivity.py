@@ -19,7 +19,7 @@ frequency_bands = [(1, 5), (5, 11), (11, 16), (16, 30), (30, 48)]
 frequency_names = ['delta', 'theta', 'sigma', 'beta', 'gamma']
 connectivity_cal = 'phase_lock'
 
-analysis_ls = ['S7076']
+analysis_ls = ['S7072', 'S7096', 'S7075', 'S7071']
 for animal in analysis_ls:
     print(f'loading {animal}')
     animal = str(animal)
