@@ -2,14 +2,7 @@
 Scripts/Preprocessing/__pycache__/
 Scripts/XGBoost/__pycache__/
 Scripts/Human/.gitignore
-Scripts/Graph/__pycache__/
-Scripts/ComplexityAnalysis/__pycache__/
-Scripts/Connectivity/__pycache__/
-Scripts/Connectivity/__pycache__/
 Scripts/Preprocessing/RawRefactor/__pycache__/
-Scripts/Connectivity/__pycache__/connectivity_class.cpython-38.pyc
-Scripts/Power/.ipynb_checkpoints
 Results
-Scripts/Complexity/.ipynb_checkpoints
 Scripts/Notebooks
-Scripts/Connectivity/.ipynb_checkpoints
+Scripts/FeatureEng/__pycache__/
