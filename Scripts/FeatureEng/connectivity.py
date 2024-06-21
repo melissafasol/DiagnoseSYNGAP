@@ -19,7 +19,7 @@ frequency_bands = [(1, 5), (5, 11), (11, 16), (16, 30), (30, 48)]
 frequency_names = ['delta', 'theta', 'sigma', 'beta', 'gamma']
 connectivity_cal = 'phase_lock'
 
-analysis_ls = ['S7072', 'S7096', 'S7075', 'S7071']
+analysis_ls = [ 'S7096', 'S7075', 'S7071']
 for animal in analysis_ls:
     print(f'loading {animal}')
     animal = str(animal)
@@ -45,7 +45,8 @@ for animal in analysis_ls:
             filtered_data = connectivity_calculations.prepare_data(num_epochs = num_epochs, connectivity = connectivity_cal)
             connect_array = connectivity_calculations.calculate_plv_mne(filtered_data = filtered_data, 
                                                                           freq_band = (low, high))
-            np.save(f'{results_path}{animal}_{label}', connect_array)
+            plv_df = connectivity_calculations.analyse_plv(array = connect_array, freq_band = label)
+            freq_results.append(plv_df)
         if connectivity_cal == 'cross_corr':
             filtered_data = connectivity_calculations.prepare_data(num_epochs = num_epochs, connectivity = connectivity_cal,
                                                                   low = low, high = high)

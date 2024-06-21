@@ -64,3 +64,23 @@ class ConnectivityClass:
                                                         fmax=freq_band[1], faverage=True).get_data()
         return connectivity_array
     
+    def analyse_plv(self, array, freq_band, num_channels = 14, 
+                    channel_labels = [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15]):
+
+        all_epochs = []
+        for epoch in array: 
+            data_dict = {}
+    
+            # ignore self-pairs in array
+            for idx_i, i in enumerate(channel_labels):
+                for idx_j, j in enumerate(channel_labels):
+                    if i != j:
+                        index = idx_i * num_channels + idx_j
+                        pair_label = f"{i}_{j}_{freq_band}_plv"
+                        data_dict[pair_label] = epoch[index]
+
+            # convert the dictionary to df
+            df = pd.DataFrame(data_dict)
+            all_epochs.append(df)
+        df_concat = pd.concat(all_epochs)
+        return df_concat
