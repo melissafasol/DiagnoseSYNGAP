@@ -10,7 +10,7 @@ from mne_connectivity import spectral_connectivity_time
 
 from preprocess_human import load_filtered_data, split_into_epochs, select_clean_indices
 
-human_data_folder = '/home/melissa/PREPROCESSING/SYNGAP1/SYNGAP1_Human_Data'
+human_data_folder = '/home/melissa/PREPROCESSING/SYNGAP1/SYNGAP1_Human_Data/'
 results_path = '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Results/Human/plv/'
 noise_directory = '/home/melissa/PREPROCESSING/SYNGAP1/human_npy/harmonic_idx/'
 
@@ -28,10 +28,10 @@ def analyse_plv(array, freq_band, num_channels = 6,
                     channel_labels = np.arange(0, 6, 1)):
 
         all_epochs = []
-        for epoch in array: 
+        for epoch in array:
             data_dict = {}
-    
-            # ignore self-pairs in array
+
+            # Ignore self-pairs in array
             for i in channel_labels:
                 for j in channel_labels:
                     if i != j:
@@ -39,10 +39,13 @@ def analyse_plv(array, freq_band, num_channels = 6,
                         pair_label = f"{i}_{j}_{freq_band}_plv"
                         data_dict[pair_label] = epoch[index]
 
-            # convert the dictionary to df
-            df = pd.DataFrame(data_dict)
+            # Convert the dictionary to a DataFrame
+            df = pd.DataFrame(data_dict, index=[0])  # Ensure each DataFrame has a consistent single row
             all_epochs.append(df)
-        df_concat = pd.concat(all_epochs)
+
+        # Concatenate all DataFrames along the first axis
+        df_concat = pd.concat(all_epochs, axis = 0, ignore_index=True)
+        df_concat = df_concat.loc[:, (df_concat != 0).any(axis=0)]
         return df_concat
 
 
@@ -60,7 +63,8 @@ for patient in patient_list:
                                           average = False, sfreq=256, n_cycles = 3, faverage=True).get_data()
         df_concat = analyse_plv(connectivity_array, freq_name, num_channels = 6, channel_labels = np.arange(0, 6, 1))
         all_freqs.append(df_concat)
-    concat_all = pd.concat(all_freqs)
+    concat_all = pd.concat(all_freqs, axis = 1)
+    print(concat_all)
     columns_to_drop = concat_all.columns[(concat_all == 0).all()]
     df = concat_all.drop(columns=columns_to_drop)
     df.to_csv(f'{results_path}{patient}_plv.csv')
