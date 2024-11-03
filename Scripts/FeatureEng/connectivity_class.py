@@ -38,24 +38,30 @@ class ConnectivityClass:
             for j in range(i + 1, len(self.channels)):
                 pairs.append([self.channels[i], self.channels[j]])
         return pairs
-            
-    def calculate_max_cross_corr(self, filtered_data, num_epochs, freq_band):
+
+    
+    def calculate_max_cross_corr(self, filtered_data, num_epochs):
         cross_corr_ls = []
         error_ls = []
         for i in range(num_epochs):
             try:
                 one_epoch = compute_max_cross_corr(sfreq=250.4, data=filtered_data[:, i])
-                df = pd.DataFrame([one_epoch], columns=[f'{ch[0]}_{ch[1]}_{freq_band}' for ch in self.channel_pairs()])
-                df_other = pd.DataFrame(data = {'Epoch': [i], 'Animal_ID': [self.animal_id]})
-                df_concat = pd.concat([df_other, df], axis = 1)
-                cross_corr_ls.append(df_concat)
+                # Add metadata (Epoch, Animal_ID) as a separate array, then concatenate it with one_epoch data
+                metadata = np.array([i, self.animal_id])  # Assuming self.animal_id is numeric or can be converted to numeric
+                combined_data = np.concatenate([metadata, one_epoch])  # Combine metadata and data
+                cross_corr_ls.append(combined_data)
             except Exception as e:
                 print(f'Error for index {i}: {e}')
                 error_ls.append(i)
 
-        cross_corr_concat = pd.concat(cross_corr_ls)
+        # Stack all epoch arrays into one 2D array (epochs x features) and save
+        cross_corr_array = np.stack(cross_corr_ls)
+        #np.save(os.path.join(save_path, f'{self.animal_id}_{freq_band}_cross_corr.npy'), cross_corr_array)
+
+        # Convert error list to an array for consistency in return format
         error_array = np.array(error_ls)
-        return cross_corr_concat, error_array
+    
+        return cross_corr_array, error_array
     
     def calculate_plv_mne(self, filtered_data, freq_band):
         tr_filter = filtered_data.transpose(1, 0, 2)

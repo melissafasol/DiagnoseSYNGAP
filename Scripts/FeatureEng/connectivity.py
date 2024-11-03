@@ -12,14 +12,14 @@ from filter import NoiseFilter
 from constants import SYNGAP_baseline_start, SYNGAP_baseline_end, channel_variables, SYNGAP_1_ls, SYNGAP_2_ls, analysis_ls
 
 directory_path = '/home/melissa/PREPROCESSING/SYNGAP1/numpyformat_baseline/'
-results_path = '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Results/Connectivity/PLV/'
+results_path = '/home/melissa/PROJECT_DIRECTORIES/EEGFeatureExtraction/Results/Rat/Connectivity/'
 channel_indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 channel_labels = [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15]
 frequency_bands = [(1, 5), (5, 11), (11, 16), (16, 30), (30, 48)]
 frequency_names = ['delta', 'theta', 'sigma', 'beta', 'gamma']
-connectivity_cal = 'phase_lock'
+connectivity_cal = 'cross_corr'
 
-analysis_ls = [ 'S7096', 'S7075', 'S7071']
+analysis_ls = [ 'S7070', 'S7071', 'S7074', 'S7086', 'S7091', 'S7098', 'S7101']
 for animal in analysis_ls:
     print(f'loading {animal}')
     animal = str(animal)
@@ -40,7 +40,7 @@ for animal in analysis_ls:
          
     freq_results = []
     for (low, high), label in zip(frequency_bands, frequency_names):
-        print(f'Processing {label} band: {low}-{high} Hz for {animal}')
+
         if connectivity_cal == 'phase_lock':
             filtered_data = connectivity_calculations.prepare_data(num_epochs = num_epochs, connectivity = connectivity_cal)
             connect_array = connectivity_calculations.calculate_plv_mne(filtered_data = filtered_data, 
@@ -48,11 +48,19 @@ for animal in analysis_ls:
             plv_df = connectivity_calculations.analyse_plv(array = connect_array, freq_band = label)
             freq_results.append(plv_df)
         if connectivity_cal == 'cross_corr':
+            print(f'Processing {label} band: {low}-{high} Hz for {animal}')
             filtered_data = connectivity_calculations.prepare_data(num_epochs = num_epochs, connectivity = connectivity_cal,
                                                                   low = low, high = high)
-            df_result, error = connectivity_calculations.calculate_max_cross_corr(filtered_data = filtered_data,
-                                                                                  num_epochs = num_epochs, freq_band = label)
-            freq_results.append(df_result)
-    freq_concat = pd.concat(freq_results)
-    all_frequencies_concat = pd.concat(freq_concat, axis = 1)
-    all_frequencies_concat.to_csv(os.path.join(results_path, f'{animal}_{connectivity_cal}.csv'))
+            df_result, error = connectivity_calculations.calculate_max_cross_corr(filtered_data = filtered_data, num_epochs = num_epochs)
+            
+            print(df_result)
+            print(type(df_result))
+
+            #freq_results.append(df_result)
+            np.save(os.path.join(results_path, f'{animal}_{label}_{connectivity_cal}.npy'), df_result)
+    #freq_concat = pd.concat(freq_results)
+    #all_frequencies_concat = pd.concat(freq_concat, axis = 1)
+    #all_frequencies_concat.to_csv(os.path.join(results_path, f'{animal}_{connectivity_cal}.csv'))
+    
+    
+    
